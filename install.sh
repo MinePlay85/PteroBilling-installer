@@ -1,0 +1,101 @@
+#!bin/bash
+
+set -e
+
+###########
+#
+#           PteroBilling Installation
+#
+#   The organization was made by ...
+#
+#   Protected with a MIT License
+#   Need Pterodactyl Panel v1.2.2 or above
+#   
+###########
+
+S_VERSION="0.0.1"
+PUBLIC_REPO="" #Mark repo of the installer
+SPONSOR="" #Mark the sponsor link
+INSTALL_LINK="" #Mark the installing link of all files
+
+# exit with an error if user is not root
+if [[ $EUID -ne 0 ]]; then
+  echo "* This Script need to have root privileges (sudo)." 1>&2
+  exit 1
+fi
+
+# Check if using curl
+if ! [ -x "$(command -v curl)"] then
+  echo "* curl is require for this script."
+  echo "* install using apt (for debian) or yum/dnf (CentOS)"
+  exit 1
+fi
+
+output() {
+  echo -e "* ${1}"
+}
+
+# if error send this to the terminal
+error() {
+  COLOR_RED='\033[0;31m'
+  COLOR_NC='\033[0m'
+
+  echo ""
+  echo ""
+  echo -e "* ${COLOR_RED}ERROR WITH THE SCRIPT${COLOR_NC}: $1"
+  echo -e "* ${COLOR_RED}if the problem persists contact support"
+  echo -e "* ${COLOR_RED}Discord Server for help: https://discord.gg/EjHe3QpJjd"
+  echo ""
+  echo ""
+}
+
+finish=false
+
+output "PteroBilling installation Sctipt"
+output "Version @ $S_VERSION"
+output ""
+output ""
+output "Copyright (C) 2021, PteroBilling"
+output "$PUBLIC_REPO"
+output ""
+output ""
+output "Sponsoring PteroBilling: $SPONSOR"
+
+output
+
+release() {
+  bash <(curl -s $INSTALL_LINK)
+}
+
+stop() {
+  ^C
+}
+
+while [ "$finish" == false ]; do
+  option=(
+    "Install PteroBilling ?"
+    "Don't Install it ?"
+  )
+
+  action=(
+    # if need to add more actions add here
+    "release"
+    "stop"
+  )
+
+  output "Do you want to install PteroBilling ?"
+
+  for i in "${!options[@]}" do
+    output "[$i] ${options[$i]}"
+  done
+
+  echo -n "* Input 0-$((${#actions[@]}-1)): "
+  read -r action
+
+  [ -z "$action" ] && error " You need to add an Input !" && continue
+
+  valid_input=("$(for ((i=0;i<=${#actions[@]}-1;i+=1)); do echo "${i}"; done)")
+  [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you need to choose (1/2)"
+  [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && eval "${actions[$action]}"
+done
+
