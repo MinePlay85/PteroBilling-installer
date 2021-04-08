@@ -6,7 +6,7 @@ set -e
 #
 #           PteroBilling Installation
 #
-#   The organization was made by ...
+#   The organization was made by Alaister
 #
 #   Protected with a MIT License
 #   Need Pterodactyl Panel v1.2.2 or above
@@ -14,7 +14,7 @@ set -e
 ###########
 
 S_VERSION="0.0.1"
-PUBLIC_REPO="" #Mark repo of the installer
+PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="" #Mark the sponsor link
 INSTALL_LINK="" #Mark the installing link of all files
 
