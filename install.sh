@@ -16,7 +16,7 @@ set -e
 S_VERSION="0.0.1"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="" #Mark the sponsor link
-INSTALL_LINK="" #Mark the installing link of all files
+INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh" #Mark the installing link of all files
 
 # exit with an error if user is not root
 if [[ $EUID -ne 0 ]]; then
