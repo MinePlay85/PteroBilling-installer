@@ -76,7 +76,7 @@ while [ "$finish" == false ]; do
     "Don't Install it ?"
   )
 
-  action=(
+  actions=(
     # if need to add more actions add here
     "release"
     "stop"
@@ -84,17 +84,16 @@ while [ "$finish" == false ]; do
 
   output "Do you want to install PteroBilling ?"
 
-  for i in "${!options[@]}"; do
-    output "[$i] ${options[$i]}"
+  for i in "${!option[@]}"; do
+    output "[$i] ${option[$i]}"
   done
 
   echo -n "* Input 0-$((${#actions[@]}-1)): "
   read -r action
 
-  [ -z "$action" ] && error " You need to add an Input !" && continue
+  [ -z "$action" ] && error "You nedd to add an Input" && continue
 
   valid_input=("$(for ((i=0;i<=${#actions[@]}-1;i+=1)); do echo "${i}"; done)")
-  [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you need to choose (1/2)"
+  [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you needf to choose (1/2)"
   [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && eval "${actions[$action]}"
 done
-
