@@ -29,7 +29,7 @@ if ! [ -x "$(command -v curl)" ]; then
   echo "Installation Wrong ! Curl is required"
   exit 1
 fi
-  
+
 output() {
   echo -e "* ${1}"
 }
@@ -84,7 +84,7 @@ while [ "$finish" == false ]; do
 
   output "Do you want to install PteroBilling ?"
 
-  for i in "${!options[@]}" do
+  for i in "${!options[@]}"; do
     output "[$i] ${options[$i]}"
   done
 
