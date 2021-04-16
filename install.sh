@@ -42,8 +42,8 @@ error() {
   echo ""
   echo ""
   echo -e "* ${COLOR_RED}ERROR WITH THE SCRIPT${COLOR_NC}: $1"
-  echo -e "* ${COLOR_RED}if the problem persists contact support"
-  echo -e "* ${COLOR_RED}Discord Server for help: https://discord.gg/EjHe3QpJjd"
+  echo -e "* ${COLOR_RED}if the problem persists contact support${COLOR_NC}"
+  echo -e "* ${COLOR_RED}Discord Server for help: https://discord.gg/EjHe3QpJjd${COLOR_NC}"
   echo ""
   echo ""
 }
