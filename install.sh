@@ -26,11 +26,10 @@ fi
 
 # Check if using curl
 if ! [ -x "$(command -v curl)" ]; then
-  echo "* curl is require for this script."
-  echo "* install using apt (for debian) or yum/dnf (CentOS)"
+  echo "Installation Wrong ! Curl is required"
   exit 1
 fi
-
+  
 output() {
   echo -e "* ${1}"
 }
