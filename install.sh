@@ -24,12 +24,6 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-# Check if using curl
-if ! [ -x "$(command -v curl)" ]; then
-  echo "Installation Wrong ! Curl is required"
-  exit 1
-fi
-
 output() {
   echo -e "* ${1}"
 }

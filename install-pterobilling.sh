@@ -21,13 +21,6 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-# Check if using curl
-if ! [ -x "$(command -v curl)"] then
-  echo "* curl is require for this script."
-  echo "* install using apt (for debian) or yum/dnf (CentOS)"
-  exit 1
-fi
-
 # Variables #
 
 # Version of the Program
