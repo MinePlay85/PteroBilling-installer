@@ -18,9 +18,15 @@ PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of
 SPONSOR="" #Mark the sponsor link
 INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh" #Mark the installing link of all files
 
-# exit with an error if user is not root
+# exit with error if user is not root
 if [[ $EUID -ne 0 ]]; then
-  echo "* This Script need to have root privileges (sudo)." 1>&2
+  echo "*You need to have root privileges for execue that (sudo)." 1>&2
+  exit 1
+fi
+
+# check for curl
+if ! [ -x "$(command -v curl)" ]; then
+  echo "* Installation aborted ! Curl is required."
   exit 1
 fi
 

@@ -15,9 +15,15 @@ set -e
 
 # General Checks #
 
-# exit with an error if user is not root
+# check root privileges
 if [[ $EUID -ne 0 ]]; then
-  echo "* This Script need to have root privileges (sudo)." 1>&2
+  echo "*You need to have root privileges for execue that (sudo)." 1>&2
+  exit 1
+fi
+
+# check for curl
+if ! [ -x "$(command -v curl)" ]; then
+  echo "* Installation aborted ! Curl is required."
   exit 1
 fi
 
