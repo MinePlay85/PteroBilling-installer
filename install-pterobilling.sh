@@ -58,7 +58,7 @@ BASE_URL="" #Mark link when the repo was created
 get_latest() {
     curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
     grep '"tag_name":' | # get tag line
-    sed -E sed -E 's/.*"([^"]+)".*/\1/' # pluck json value
+    sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
 }
 
 # version of pterobilling
