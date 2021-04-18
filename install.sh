@@ -67,7 +67,7 @@ release() {
 }
 
 stop() {
-  ^C
+  exit
 }
 
 while [ "$finish" == false ]; do
