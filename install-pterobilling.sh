@@ -263,7 +263,7 @@ ask_have_composer() {
   echo -n "You already composer installed ? (y/N)"
   read -r COMPOSER
 
-  if ! [[ "$COMPOSER" =~ Yy]]; then
+  if [[ ! "$COMPOSER" =~ Yy]]; then
     echo "Installing composer.."
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     echo "Composer installed!"
@@ -274,7 +274,7 @@ db_creator() {
   echo -n "You already installed MySQL ?"
   read -r MYSQLINSTALLATION
 
-  if ! [[ "$MYSQLINSTALLATION" =~ yY ]]; then
+  if [[ ! "$MYSQLINSTALLATION" =~ yY ]]; then
     if [ "$OS" == "centos" ]; then 
       # Installing MariaDB/MySQL
       echo "* MySQL Installation..."
