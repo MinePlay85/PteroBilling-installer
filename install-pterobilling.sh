@@ -157,7 +157,7 @@ ask_ssl() {
   print_warning "if you want to use a SSL Certificates you need to have a domain (e.g billing.pterobilling.io) and you cannot use SSL if you use hostname as an IP you "
   echo -e -n "& Do you want to configure HTTPS using a SSQL Certificates ? [Y/N]"
   read -r SSL_CONF
-  if [[ "$SSL_CONF" ~= [yY] ]]; then
+  if [[ "$SSL_CONF" =~ [yY] ]]; then
     ASSUME_SSQL=false
   fi  
 }
