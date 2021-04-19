@@ -158,7 +158,7 @@ ask_ssl() {
   echo -e -n "& Do you want to configure HTTPS using a SSQL Certificates ? [Y/N]"
   read -r SSL_CONF
   if [[ "$SSL_CONF" ~= [yY] ]]; then
-    # VARIABLE COMMAND
+    ASSUME_SSQL=false
   fi  
 }
 
@@ -169,7 +169,7 @@ ask_ssl_assume() {
   echo -n "& Do you assume the SSL ? [Y/N]: "
   read -r SSLA_INPUT
   # Verify if the SSLA_INPUT is y
-  [[ "$SSLA_INPUT" =~ [yY] ]]
+  [[ "$SSLA_INPUT" =~ [yY] ]] && ASSUME_SSL=true
   true
 }
 
@@ -256,5 +256,132 @@ cpu_comp() {
     exit 1
   fi
 }
+
+# installation funcs #
+
+ask_have_composer() {
+  echo -n "You already composer installed ? (y/N)"
+  read -r COMPOSER
+
+  if ! [[ "$COMPOSER" =~ Yy]]; then
+    echo "Installing composer.."
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    echo "Composer installed!"
+  fi
+}
+
+db_creator() {
+  echo -n "You already installed MySQL ?"
+  read -r MYSQLINSTALLATION
+
+  if ! [[ "$MYSQLINSTALLATION" =~ yY ]]; then
+    if [ "$OS" == "centos" ]; then 
+      # Installing MariaDB/MySQL
+      echo "* MySQL Installation..."
+      echo "* Set root password? [Y/n] Y"
+      echo "* Remove anonymous users? [Y/n] Y"
+      echo "* Disallow root login remotely? [Y/n] Y"
+      echo "* Remove test database and access to it? [Y/n] Y"
+      echo "* Reload privilege tables now? [Y/n] Y"
+      echo "*"
+
+      mysql_secure_installation
+
+      echo "* The script should have asked you to set the MySQL root password earlier (not to be confused with the pterodactyl database user password)"
+      echo "* MySQL will now ask you to enter the password before each command."
+
+      echo "* Create MySQL user."
+      mysql -u root -p -e "CREATE USER '${SQL_USER}'@'127.0.0.1' IDENTIFIED BY '${SQL_PASSWORD}';"
+
+      echo "* Create database."
+      mysql -u root -p -e "CREATE DATABASE ${SQL_DB};"
+
+      echo "* Grant privileges."
+      mysql -u root -p -e "GRANT ALL PRIVILEGES ON ${SQL_DB}.* TO '${SQL_USER}'@'127.0.0.1' WITH GRANT OPTION;"
+
+      echo "* Flush privileges."
+      mysql -u root -p -e "FLUSH PRIVILEGES;"
+    else
+      echo "* Performing MySQL queries.."
+
+      echo "* Creating MySQL user.."
+      mysql -u root -e "CREATE USER '${SQL_USER}'@'127.0.0.1' IDENTIFIED BY '${SQL_PASSWORD}';"
+
+      echo "* Creating database.."
+      mysql -u root -e "CREATE DATABASE ${SQL_DB};"
+
+      echo "* Granting privileges.."
+      mysql -u root -e "GRANT ALL PRIVILEGES ON ${SQL_DB}.* TO '${SQL_USER}'@'127.0.0.1' WITH GRANT OPTION;"
+
+      echo "* Flushing privileges.."
+      mysql -u root -e "FLUSH PRIVILEGES;"
+
+      echo "* MySQL database created & configured!"
+    fi
+  else
+    echo "* Performing MySQL queries.."
+
+    echo "* Creating MySQL user.."
+    mysql -u root -e "CREATE USER '${SQL_USER}'@'127.0.0.1' IDENTIFIED BY '${SQL_PASSWORD}';"
+
+    echo "* Creating database.."
+    mysql -u root -e "CREATE DATABASE ${SQL_DB};"
+
+    echo "* Granting privileges.."
+    mysql -u root -e "GRANT ALL PRIVILEGES ON ${SQL_DB}.* TO '${SQL_USER}'@'127.0.0.1' WITH GRANT OPTION;"
+
+    echo "* Flushing privileges.."
+    mysql -u root -e "FLUSH PRIVILEGES;"
+
+    echo "* MySQL database created & configured!"
+  fi    
+}
+
+
+# dl pterobilling files
+pterobilling_dl() {
+  echo "* Downloading Pterobilling Files..."
+  cd /var/www 
+
+  #Composer Install Files
+  composer create-project pterobilling/pterobilling pterobilling --no-dev --stability=alpha
+  chmod -R 755 /var/www/pterobilling
+  chown -R www-data:www-data /var/www/pterobilling
+
+  # .env
+  cp .env.example .env
+  [ "$OS" == "centos" ] && export PATH=/usr/local/bin:$PATH
+  
+  php artisan key:generate --force
+  echo "* PteroBilling files and Composer dependencies was installed !"
+}
+
+config() {
+  app_url="http//$FQDN"
+  [ "$ASSUME_SSL" == true ] && app_url="https://$FQDN"
+
+  php artisan p:environment:setup \
+    --author="$email" \
+    --url="$app_url" \
+    --timezone="$timezone" \
+    --cache="redis" \
+    --session="redis" \
+    --queue="redis" \
+    --redis-host="localhost" \
+    --redis-pass="null" \
+    --redis-port="6379" \
+    --settings-ui=true
+
+  php artisan p:environment:database \
+    --host="127.0.0.1" \
+    --port="3306" \
+    --database="$SQL_DB" \
+    --username="$SQL_USER"
+    --password="$SQL_PASSWORD"
+
+  php artisan migrate --seed --force  
+}
+
+
 # Install Link
 # https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install.sh
