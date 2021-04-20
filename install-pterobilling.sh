@@ -386,7 +386,7 @@ permission() {
   case "$OS" in
     debian | ubuntu)
       #command
-    centos
+    centos)
       #command
 }      
 
