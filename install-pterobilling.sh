@@ -388,6 +388,7 @@ permission() {
       #command
     centos)
       #command
+  esac    
 }      
 
 # OS install func #
