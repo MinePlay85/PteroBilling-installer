@@ -163,7 +163,7 @@ get_latest_version() {
 
 # version of pterobilling
 echo "* Getting release information"
-PTEROBILLING_VERSION="$(get_latest "pterobilling/pterobilling")"
+PTEROBILLING_VERSION="$(get_latest_version "pterobilling/pterobilling")"
 
 # function lib #
 array_contains_element() {
