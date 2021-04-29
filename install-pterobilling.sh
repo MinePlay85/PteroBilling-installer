@@ -27,50 +27,10 @@ if ! [ -x "$(command -v curl)" ]; then
   exit 1
 fi
 
-# Variables #
-
-# Version of the Program
-GITHUB_SOURCE="master"
-SCRIPT_VERSION="lastest"
-
-FQDN=""
-
-# MySQL
-SQL_USER="pterobilling"
-SQL_PASSWORD=""
-SQL_DB="billing"
-
-# Admin Account
-admin_email=""
-admin_firstname=""
-admin_surname=""
-admin_username=""
-admin_pass=""
-
-#Environment
-email=""
-
-# Download URL
-BILLING_DL_URL="https://github.com/pterobilling/pterobilling/releases/lastest/download/pterobilling.tar.gz"
-BASE_URL="" #Mark link when the repo was created
-
-# Check Version #
-get_latest() {
-    curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
-    grep '"tag_name":' | # get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
-}
-
-# version of pterobilling
-echo "* Getting release information"
-PTEROBILLING_VERSION="$(get_latest "pterobilling/pterobilling")"
-
-# function lib #
-array_contains_element() {
-  local e match="$1"
-  shift
-  for e; do [[ "$e" == "$match" ]] && return 0; done
-  return 1
+update() {
+  apt update -q -y && apt upgrade -y
+  yum -y update
+  dnf -y update
 }
 
 # Visual func #
@@ -98,6 +58,122 @@ warn() {
   echo ""
 }
 
+# OS fucn #
+
+detect_distro() {
+  if [ -f /etc/os-release ]; then
+    # freedesktop.org and systemd
+    . /etc/os-release
+    OS=$(echo "$ID" | awk '{print tolower($0)}')
+    OS_VER=$VERSION_ID
+  elif type lsb_release >/dev/null 2>&1; then
+    # linuxbase.org
+    OS=$(lsb_release -si | awk '{print tolower($0)}')
+    OS_VER=$(lsb_release -sr)
+  elif [ -f /etc/lsb-release ]; then
+    # For some versions of Debian/Ubuntu without lsb_release command
+    . /etc/lsb-release
+    OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
+    OS_VER=$DISTRIB_RELEASE
+  elif [ -f /etc/debian_version ]; then
+    # Older Debian/Ubuntu/etc.
+    OS="debian"
+    OS_VER=$(cat /etc/debian_version)
+  elif [ -f /etc/SuSe-release ]; then
+    # Older SuSE/etc.
+    OS="SuSE"
+    OS_VER="?"
+  elif [ -f /etc/redhat-release ]; then
+    # Older Red Hat, CentOS, etc.
+    OS="Red Hat/CentOS"
+    OS_VER="?"
+  else
+    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
+    OS=$(uname -s)
+    OS_VER=$(uname -r)
+  fi
+
+  OS=$(echo "$OS" | awk '{print tolower($0)}')
+  OS_VER_MAJOR=$(echo "$OS_VER" | cut -d. -f1)
+}
+
+cpu_comp() {
+  CPU_ARCH=$(uname -m)
+  if [ "${CPU_ARCH}" != "x86_64" ]; then 
+    print_warning "Detected CPU architecture $CPU_ARCH"
+    print_warning "Using any another CPU than 64 bit (x86_64) will be cause problem"
+
+    echo -e  -n "& Are you sure you want to proceed? [Y/n]"
+    read -r choice
+    if [[ ! "$choice" =~ [Yy] ]]; then
+      print_error "Installation Failed!"
+      exit 1
+    fi
+  fi
+
+  # OS 
+  case "$OS" in
+    ubuntu)
+      PHP_SOCKET="/run/php/php8.0-fpm.sock"
+      [ "$OS_VER_MAJOR" == "18" ] && SUPPORTED=true
+      [ "$OS_VER_MAJOR" == "20" ] && SUPPORTED=true
+      ;;
+    debian)
+      PHP_SOCKET="/run/php/php8.0-fpm.sock"
+      [ "$OS_VER_MAJOR" == "9" ] && SUPPORTED=true
+      [ "$OS_VER_MAJOR" == "10" ] && SUPPORTED=true
+      ;;
+    centos)
+      PHP_SOCKET="/var/run/php-fpm/pterodactyl.sock"
+      [ "$OS_VER_MAJOR" == "7" ] && SUPPORTED=true
+      [ "$OS_VER_MAJOR" == "8" ] && SUPPORTED=true
+      ;;
+    *)
+      SUPPORTED=false ;;
+  esac     
+
+  # exit if not supported
+  if [ "$SUPPORTED" == true ]; then
+    echo "* $OS $OS_VER is supported."
+  else
+    echo "* $OS $OS_VER is not supported"
+    print_error "Unsupported OS"
+    exit 1
+  fi
+}
+
+# Variables #
+
+# Version of the Program
+GITHUB_SOURCE="master"
+SCRIPT_VERSION="lastest"
+
+FQDN=""
+
+# Download URL
+BILLING_DL_URL="https://github.com/pterobilling/pterobilling/releases/lastest/download/pterobilling.tar.gz"
+BASE_URL="" #Mark link when the repo was created
+
+# Check Version #
+get_latest_version() {
+    curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
+    grep '"tag_name":' | # get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
+}
+
+# version of pterobilling
+echo "* Getting release information"
+PTEROBILLING_VERSION="$(get_latest "pterobilling/pterobilling")"
+
+# function lib #
+array_contains_element() {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+# Other Visual Func #
 brake() {
   for ((n=0;n<$1;n++));
     do
@@ -173,91 +249,11 @@ ask_ssl_assume() {
   true
 }
 
-# OS CHECK FUNC#
-
-detect_distro() {
-  if [ -f /etc/os-release ]; then
-    # freedesktop.org and systemd
-    . /etc/os-release
-    OS=$(echo "$ID" | awk '{print tolower($0)}')
-    OS_VER=$VERSION_ID
-  elif type lsb_release >/dev/null 2>&1; then
-    # linuxbase.org
-    OS=$(lsb_release -si | awk '{print tolower($0)}')
-    OS_VER=$(lsb_release -sr)
-  elif [ -f /etc/lsb-release ]; then
-    # For some versions of Debian/Ubuntu without lsb_release command
-    . /etc/lsb-release
-    OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
-    OS_VER=$DISTRIB_RELEASE
-  elif [ -f /etc/debian_version ]; then
-    # Older Debian/Ubuntu/etc.
-    OS="debian"
-    OS_VER=$(cat /etc/debian_version)
-  elif [ -f /etc/SuSe-release ]; then
-    # Older SuSE/etc.
-    OS="SuSE"
-    OS_VER="?"
-  elif [ -f /etc/redhat-release ]; then
-    # Older Red Hat, CentOS, etc.
-    OS="Red Hat/CentOS"
-    OS_VER="?"
-  else
-    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-    OS=$(uname -s)
-    OS_VER=$(uname -r)
-  fi
-
-  OS=$(echo "$OS" | awk '{print tolower($0)}')
-  OS_VER_MAJOR=$(echo "$OS_VER" | cut -d. -f1)
-}
-
-cpu_comp() {
-  CPU_ARCH=$(uname -m)
-  if [ "${CPU_ARCH}" != "x86_64" ]; then 
-    print_warning "Detected CPU architecture $CPU_ARCH"
-    print_warning "Using any another CPU than 64 bit (x86_64) will be cause problem"
-
-    echo -e  -n "& Are you sure you want to proceed? [Y/n]"
-    read -r choice
-    if [[ ! "$choice" =~ [Yy] ]]; then
-      print_error "Installation Failed!"
-      exit 1
-    fi
-  fi
-
-  # OS (PHP 8.0) migred to 7.4 later
-  case "$OS" in
-    ubuntu)
-      PHP_SOCKET="/run/php/php8.0-fpm.sock"
-      [ "$OS_VER_MAJOR" == "18" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "20" ] && SUPPORTED=true
-      ;;
-    debian)
-      PHP_SOCKET="/run/php/php8.0-fpm.sock"
-      [ "$OS_VER_MAJOR" == "9" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "10" ] && SUPPORTED=true
-      ;;
-    centos)
-      PHP_SOCKET="/var/run/php-fpm/pterodactyl.sock"
-      [ "$OS_VER_MAJOR" == "7" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "8" ] && SUPPORTED=true
-      ;;
-    *)
-      SUPPORTED=false ;;
-  esac     
-
-  # exit if not supported
-  if [ "$SUPPORTED" == true ]; then
-    echo "* $OS $OS_VER is supported."
-  else
-    echo "* $OS $OS_VER is not supported"
-    print_error "Unsupported OS"
-    exit 1
-  fi
-}
-
 # installation funcs #
+
+redis() {
+
+}
 
 ask_have_composer() {
   echo -n "You already composer installed ? (y/N)"
@@ -360,35 +356,16 @@ config() {
   app_url="http//$FQDN"
   [ "$ASSUME_SSL" == true ] && app_url="https://$FQDN"
 
-  php artisan p:environment:setup \
-    --author="$email" \
-    --url="$app_url" \
-    --timezone="$timezone" \
-    --cache="redis" \
-    --session="redis" \
-    --queue="redis" \
-    --redis-host="localhost" \
-    --redis-pass="null" \
-    --redis-port="6379" \
-    --settings-ui=true
-
-  php artisan p:environment:database \
-    --host="127.0.0.1" \
-    --port="3306" \
-    --database="$SQL_DB" \
-    --username="$SQL_USER"
-    --password="$SQL_PASSWORD"
-
   php artisan migrate --seed --force  
 }
 
 permission() {
   case "$OS" in
     debian | ubuntu)
-      #command
+      chown -R www-data:www-data ./* ;;
     centos)
-      #command
-  esac    
+      chown -R nginx:nginx ./* ;;
+  esac   
 }      
 
 # OS install func #
@@ -510,7 +487,6 @@ debian_dep() {
   apt -y install dirmngr
 
   # install PHP 8.0 using sury's repo instead of default 7.2 package (in buster repo)
-  # this guide shows how: https://vilhelmprytz.se/2018/08/22/install-php72-on-Debian-8-and-9.html
   apt install ca-certificates apt-transport-https lsb-release -y
   wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
   echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
@@ -606,7 +582,7 @@ ssl() {
       ;;
   esac
   # Obtain certificate
-  certbot --nginx --redirect --no-eff-email --email "$email" -d "$FQDN" || FAILED=true
+  certbot --nginx --redirect -d "$FQDN" || FAILED=true
 
   # Check if it succeded
   if [ ! -d "/etc/letsencrypt/live/$FQDN/" ] || [ "$FAILED" == true ]; then

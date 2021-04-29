@@ -59,6 +59,7 @@ output "$PUBLIC_REPO"
 output ""
 output ""
 output "Sponsoring PteroBilling: $SPONSOR"
+output ""
 
 output
 
@@ -67,6 +68,7 @@ release() {
 }
 
 stop() {
+  echo -n "Aborted !"
   exit
 }
 
@@ -94,6 +96,6 @@ while [ "$finish" == false ]; do
   [ -z "$action" ] && error "You nedd to add an Input" && continue
 
   valid_input=("$(for ((i=0;i<=${#actions[@]}-1;i+=1)); do echo "${i}"; done)")
-  [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you needf to choose (1/2)"
+  [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you need to choose (1/2)"
   [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && eval "${actions[$action]}"
 done
