@@ -252,7 +252,9 @@ ask_ssl_assume() {
 # installation funcs #
 
 redis() {
-
+  apt -y install redis-server
+  systemctl enable redis-Server
+  systemctl start redis-server
 }
 
 ask_have_composer() {
@@ -391,10 +393,6 @@ enable_services_deb_based() {
   service redis-server enable
   service mariadb start
   service redis-server start
-}
-
-enable_services_centos_based() {
-  # commannd enable & start
 }
 
 selinux_allow() {
@@ -571,7 +569,7 @@ centos_php() {
 ssl() {
   FAILED = false
 
-  #Cerbot
+  #Certbot
   case "$OS" in
     debian | ubuntu)
       apt-get -y install certbot python3-certbot-nginx
@@ -591,11 +589,36 @@ ssl() {
     read -r CONFIGURE_SSL
 
     if [[ "$CONFIGURE_SSL" =~ [Yy] ]]; then
-      # Config NGINX and SSL
+      SSL_ASSUME=true
+      CONFIG_SSL=false
+      config_nginx
     else
-      # Assume SSL
+      SSL_ASSUME=false
+      CONFIG_SSL=false
     fi
   fi
+}
+
+#WebServer #
+config_nginx() {
+  if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == true ]; then
+    CONFIG_FILE="nginx_ssl.conf"
+  else
+    CONFIG_FILE="nginx.conf"
+  fi  
+  echo "Nginx Config: "
+
+  # Download config PteroBillng
+  curl -o /etc/nginx/sites-available/pterobilling.conf $GITHUB_BASE_URL/nginx-config/$CONFIG_FILE
+
+  # Replace <domain> by Domain name
+  sed -i -e "s@<domain>@${FQDN}@g" /etc/nginx/sites-available/pterobilling.conf
+
+  # replace all <php_socket> places with correct socket "path"
+  sed -i -e "s@<php_socket>@${PHP_SOCKET}@g" /etc/nginx/sites-available/pterobilling.conf
+
+  # enable pterobilling nginx
+  ln -s /etc/nginx/sites-available/pterobilling.conf /etc/nginx/sites-enabled/pterobilling.conf
 }
 
 
