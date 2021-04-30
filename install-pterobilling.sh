@@ -271,7 +271,7 @@ ssl() {
 
 # WebServer #
 config_nginx() {
-  if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == true ]; then
+  if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == false ]; then
     CONFIG_FILE="ssl_nginx.conf"
   else
     CONFIG_FILE="nginx.conf"
