@@ -297,9 +297,9 @@ install_files() {
   pterobilling_dl
   ask_ssl
   ask_ssl_assume
-  ssl
-  config
   config_nginx
+  config
+  ssl
 }
 
 bye() {
