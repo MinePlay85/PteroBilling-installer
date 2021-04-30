@@ -118,8 +118,6 @@ cpu_comp() {
 # Update dep
 update() {
   apt update -y && apt upgrade -y
-  yum -y update
-  dnf -y update
 }
 
 # PHP8.0 Install
