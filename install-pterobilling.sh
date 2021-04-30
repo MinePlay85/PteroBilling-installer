@@ -29,8 +29,6 @@ fi
 
 update() {
   apt update -q -y && apt upgrade -y
-  yum -y update
-  dnf -y update
 }
 
 echo -n "Do you want to add an FQDN (IP of your VPS if not have a domain) (e.g billing.pterobilling.xyz): "
@@ -283,10 +281,7 @@ config_nginx() {
   curl -o /etc/nginx/sites-available/pterobilling.conf $BASE_URL/nginx-config/$CONFIG_FILE
 
   # Replace <domain> by Domain name
-  sed -i -e "s@<domain>@${FQDN}@g" /etc/nginx/sites-available/pterobilling.conf
-
-  # replace all <php_socket> places with correct socket "path"
-  sed -i -e "s@<php_socket>@${PHP_SOCKET}@g" /etc/nginx/sites-available/pterobilling.conf
+  sed -i -e "s@domain@${FQDN}@g" /etc/nginx/sites-available/pterobilling.conf
 
   # enable pterobilling nginx
   ln -s /etc/nginx/sites-available/pterobilling.conf /etc/nginx/sites-enabled/pterobilling.conf
