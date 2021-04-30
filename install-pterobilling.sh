@@ -258,23 +258,23 @@ ssl() {
     echo -n "* Still assume SSL? (y/N): "
     read -r CONFIGURE_SSL
 
-    if [[ "$CONFIGURE_SSL" =~ [Yy] ]]; then
-      SSL_ASSUME=true
-      CONFIG_SSL=false
-    else
-      SSL_ASSUME=false
-      CONFIG_SSL=false
-    fi
+    #if [[ "$CONFIGURE_SSL" =~ [Yy] ]]; then
+    #  SSL_ASSUME=true
+    #  CONFIG_SSL=false
+    #else
+    #  SSL_ASSUME=false
+    #  CONFIG_SSL=false
+    #fi
   fi
 }
 
 # WebServer #
 config_nginx() {
-  if [ $CONFIG_SSL == false ] && [ $SSL_ASSUME == true ]; then
+  #if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == false ]; then
     CONFIG_FILE="ssl_nginx.conf"
-  else
-    CONFIG_FILE="nginx.conf"
-  fi  
+  #else
+  #  CONFIG_FILE="nginx.conf"
+  #fi  
   echo "Nginx Config: "
 
   # Download config PteroBillng
