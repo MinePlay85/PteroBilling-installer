@@ -168,7 +168,7 @@ nginx_install() {
   echo -n "You already nginx installed ? (y/N)"
   read -r NGINX_INSTALL
 
-  if [[ ! "$NGINX_INSTALL" ~= [yY] ]]; then
+  if [[ ! "$NGINX_INSTALL" =~ [yY] ]]; then
     apt install -y nginx
     systemctl start nginx
   fi
@@ -181,12 +181,29 @@ certbot_install() {
 
 # MySQL Database creator #
 
-mysql_databse() {
+mysql_database() {
   echo "* Create Database."
   mysql -u root -p -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
   mysql -u root -p -e "CREATE DATABASE billing;"
   mysql -u root -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
   mysql -u root -p -e "FLUSH PRIVILEGES;"
 }
+
+
+
+install_dep() {
+  [ ! "$OS" == "centos" ]
+  ask_have_composer
+  certbot_install
+  nginx_install
+  db_installer
+  mysql_database
+  redis
+  php_installer
+  update
+}
+
+#run script
+install_dep
 
 # Repo Link: https://github.com/MinePlay85/PteroBilling-installer

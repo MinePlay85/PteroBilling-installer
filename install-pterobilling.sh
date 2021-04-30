@@ -233,6 +233,8 @@ config() {
   [ "$ASSUME_SSL" == true ] && app_url="https://$FQDN"
 
   php artisan migrate --seed --force  
+  php artisan config:cache
+  php artisan view:cache
 }     
 
 # SSL Func #
@@ -291,6 +293,24 @@ config_nginx() {
   ln -s /etc/nginx/sites-available/pterobilling.conf /etc/nginx/sites-enabled/pterobilling.conf
 }
 
+install_files() {
+  [ ! "$OS" == "centos" ]
+  pterobilling_dl
+  ask_ssl
+  ask_ssl_assume
+  ssl
+  config_nginx
+}
+
+bye() {
+  echo "* Installation Finished ! Enjoy ! Bye! "
+  exit
+}
+
+#run script
+install_files
+bye
 
 # Install Link
 # https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install.sh
+
