@@ -95,7 +95,7 @@ cpu_comp() {
     print_warning "Detected CPU architecture $CPU_ARCH"
     print_warning "Using any another CPU than 64 bit (x86_64) will be cause problem"
 
-    echo -e  -n "& Are you sure you want to proceed? [Y/n]"
+    echo -e  -n "* Are you sure you want to proceed? [Y/n]: "
     read -r choice
     if [[ ! "$choice" =~ [Yy] ]]; then
       print_error "Installation Failed!"
@@ -138,7 +138,7 @@ redis() {
 
 # Composer Install
 ask_have_composer() {
-  echo -n "You already composer installed ? (y/N)"
+  echo -n "You already composer installed ? (y/N): "
   read -r COMPOSER
 
   if [[ ! "$COMPOSER" =~ [Yy] ]]; then
@@ -150,7 +150,7 @@ ask_have_composer() {
 
 # MariaDB install
 db_installer() {
-  echo -n "You already installed MySQL ?"
+  echo -n "You already installed MySQL ? (y/N): "
   read -r MYSQLINSTALLATION
 
   if [[ ! "$MYSQLINSTALLATION" =~ [yY] ]]; then
@@ -165,7 +165,7 @@ db_installer() {
 
 # Nginx Install
 nginx_install() {
-  echo -n "You already nginx installed ? (y/N)"
+  echo -n "You already nginx installed ? (y/N): "
   read -r NGINX_INSTALL
 
   if [[ ! "$NGINX_INSTALL" =~ [yY] ]]; then
@@ -182,11 +182,12 @@ certbot_install() {
 # MySQL Database creator #
 
 mysql_database() {
-  echo "* Create Database."
-  mysql -u root -p -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
-  mysql -u root -p -e "CREATE DATABASE billing;"
-  mysql -u root -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
-  mysql -u root -p -e "FLUSH PRIVILEGES;"
+  echo "* Create Database..."
+  mysql -e "USE mysql;"
+  mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
+  mysql -e "CREATE DATABASE billing;"
+  mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
+  mysql -e "FLUSH PRIVILEGES;"
 }
 
 

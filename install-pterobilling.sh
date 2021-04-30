@@ -33,7 +33,7 @@ update() {
   dnf -y update
 }
 
-echo -n "Do you want to add an FQDN (IP of your VPS if not have a domain) (e.g billing.pterobilling.xyz)"
+echo -n "Do you want to add an FQDN (IP of your VPS if not have a domain) (e.g billing.pterobilling.xyz): "
 read -r FQDN
 
 # OS fucn #
@@ -190,7 +190,7 @@ hyperlink() {
 
 ask_ssl() {
   print_warning "if you want to use a SSL Certificates you need to have a domain (e.g billing.pterobilling.io) and you cannot use SSL if you use hostname as an IP you "
-  echo -e -n "& Do you want to configure HTTPS using a SSL Certificates ? [Y/N]"
+  echo -e -n "& Do you want to configure HTTPS using a SSL Certificates ? [Y/N]: "
   read -r SSL_CONF
   if [[ "$SSL_CONF" =~ [yY] ]]; then
     ASSUME_SSL=false
