@@ -17,6 +17,7 @@ S_VERSION="0.0.1"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="" #Mark the sponsor link
 INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh" #Mark the installing link of all files
+DEP_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dependencies.sh"
 
 # exit with error if user is not root
 if [[ $EUID -ne 0 ]]; then
@@ -72,15 +73,21 @@ stop() {
   exit
 }
 
+dependency() {
+  bash <(curl -s $DEP_INSTALL_LINK)
+}
+
 while [ "$finish" == false ]; do
   option=(
     "Install PteroBilling ?"
+    "Install Dependencies ? (After is recommended)"
     "Don't Install it ?"
   )
 
   actions=(
     # if need to add more actions add here
     "release"
+    "dependency"
     "stop"
   )
 
