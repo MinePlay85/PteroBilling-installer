@@ -214,12 +214,13 @@ pterobilling_dl() {
   #Composer Install Files
   # composer create-project pterobilling/pterobilling pterobilling --no-dev --stability=alpha
   git clone $GIT_CLONE_URL
-  cd /var/www/pterobilling && composer create-project
+  cd /var/www/pterobilling
+  cp .env.example .env
+  composer create-project
   chmod -R 755 /var/www/pterobilling
   chown -R www-data:www-data /var/www/pterobilling
 
   # .env
-  cp .env.example .env
   [ "$OS" == "centos" ] && export PATH=/usr/local/bin:$PATH
   
   #php artisan key:generate --force
@@ -271,7 +272,7 @@ ssl() {
 # WebServer #
 config_nginx() {
   if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == true ]; then
-    CONFIG_FILE="nginx_ssl.conf"
+    CONFIG_FILE="ssl_nginx.conf"
   else
     CONFIG_FILE="nginx.conf"
   fi  
