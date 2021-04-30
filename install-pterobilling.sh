@@ -129,7 +129,7 @@ SCRIPT_VERSION="lastest"
 # Download URL
 BILLING_DL_URL="https://github.com/pterobilling/pterobilling/releases/lastest/download/pterobilling.tar.gz"
 BASE_URL="https://github.com/MinePlay85/PteroBilling-Installer" #Mark link when the repo was created
-GIT_CLONE_URL="https:/github.com/pterobilling/pterobilling"
+GIT_CLONE_URL="https://github.com/pterobilling/pterobilling"
 
 # Check Version #
 get_latest_version() {

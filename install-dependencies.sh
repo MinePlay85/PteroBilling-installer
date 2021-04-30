@@ -132,7 +132,6 @@ php_installer() {
 # Redis Server Install
 redis() {
   apt -y install redis-server
-  systemctl enable redis-Server
   systemctl start redis-server
 }
 
