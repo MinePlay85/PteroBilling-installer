@@ -261,7 +261,6 @@ ssl() {
     if [[ "$CONFIGURE_SSL" =~ [Yy] ]]; then
       SSL_ASSUME=true
       CONFIG_SSL=false
-      config_nginx
     else
       SSL_ASSUME=false
       CONFIG_SSL=false
@@ -271,7 +270,7 @@ ssl() {
 
 # WebServer #
 config_nginx() {
-  if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == false ]; then
+  if [ $CONFIG_SSL == false ] && [ $SSL_ASSUME == true ]; then
     CONFIG_FILE="ssl_nginx.conf"
   else
     CONFIG_FILE="nginx.conf"
