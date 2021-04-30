@@ -69,8 +69,8 @@ release() {
 }
 
 stop() {
-  echo -n "Aborted !"
   exit
+  echo "Aborted !"
 }
 
 dependency() {
@@ -79,15 +79,21 @@ dependency() {
 
 while [ "$finish" == false ]; do
   option=(
+    "Install PteroBilling And Dependencies ?"
+
     "Install PteroBilling ?"
-    "Install Dependencies ? (After is recommended)"
+    "Install Dependencies ? (Before is recommended)"
+
     "Don't Install it ?"
   )
 
   actions=(
     # if need to add more actions add here
+    "dependency; release"
+    
     "release"
     "dependency"
+
     "stop"
   )
 
@@ -100,7 +106,7 @@ while [ "$finish" == false ]; do
   echo -n "* Input 0-$((${#actions[@]}-1)): "
   read -r action
 
-  [ -z "$action" ] && error "You nedd to add an Input" && continue
+  [ -z "$action" ] && error "You need to add an Input" && continue
 
   valid_input=("$(for ((i=0;i<=${#actions[@]}-1;i+=1)); do echo "${i}"; done)")
   [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you need to choose (1/2)"

@@ -27,7 +27,7 @@ if ! [ -x "$(command -v curl)" ]; then
 fi
 
 # Visual func #
-errpr() {
+error() {
   COLOR_RED='\033[0;31m'
   COLOR_NC='\033[0m'
 
@@ -115,12 +115,28 @@ cpu_comp() {
 
 # installation funcs #
 
+# Update dep
+update() {
+  apt update -y && apt upgrade -y
+  yum -y update
+  dnf -y update
+}
+
+# PHP8.0 Install
+php_installer() {
+  apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
+  systemctl enable php8.0-fpm
+  systemctl start php8.0-fpm
+}
+
+# Redis Server Install
 redis() {
   apt -y install redis-server
   systemctl enable redis-Server
   systemctl start redis-server
 }
 
+# Composer Install
 ask_have_composer() {
   echo -n "You already composer installed ? (y/N)"
   read -r COMPOSER
@@ -132,36 +148,45 @@ ask_have_composer() {
   fi
 }
 
-db-installer() {
+# MariaDB install
+db_installer() {
   echo -n "You already installed MySQL ?"
   read -r MYSQLINSTALLATION
 
   if [[ ! "$MYSQLINSTALLATION" =~ [yY] ]]; then
-    if [ "$OS" == "centos" ]; then 
-      # Installing MariaDB/MySQL
-      echo "* MySQL Installation..."
-      echo "* Set root password? [Y/n] Y"
-      echo "* Remove anonymous users? [Y/n] Y"
-      echo "* Disallow root login remotely? [Y/n] Y"
-      echo "* Remove test database and access to it? [Y/n] Y"
-      echo "* Reload privilege tables now? [Y/n] Y"
-      echo "*"
+    echo "Installing MariaDB..."
+    apt install -y mariadb-common mariadb-server mariadb-client
+    systemctl start mariadb
+    systemctl enable mariadb    
 
-      mysql_secure_installation
-
-      echo "* The script should have asked you to set the MySQL root password earlier (not to be confused with the pterodactyl database user password)"
-      echo "* MySQL will now ask you to enter the password before each command."
-    else
-      echo "* MySQL Installation..."
-      echo "* Set root password? [Y/n] Y"
-      echo "* Remove anonymous users? [Y/n] Y"
-      echo "* Disallow root login remotely? [Y/n] Y"
-      echo "* Remove test database and access to it? [Y/n] Y"
-      echo "* Reload privilege tables now? [Y/n] Y"
-      echo "*"
-
-      mysql_secure_installation
-    fi
-      
+    mysql_secure_installation
+  fi  
 }
 
+# Nginx Install
+nginx_install() {
+  echo -n "You already nginx installed ? (y/N)"
+  read -r NGINX_INSTALL
+
+  if [[ ! "$NGINX_INSTALL" ~= [yY] ]]; then
+    apt install -y nginx
+    systemctl start nginx
+  fi
+}
+
+# Certbot Install
+certbot_install() {
+  apt install -y certbot
+}
+
+# MySQL Database creator #
+
+mysql_databse() {
+  echo "* Create Database."
+  mysql -u root -p -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
+  mysql -u root -p -e "CREATE DATABASE billing;"
+  mysql -u root -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
+  mysql -u root -p -e "FLUSH PRIVILEGES;"
+}
+
+# Repo Link: https://github.com/MinePlay85/PteroBilling-installer
