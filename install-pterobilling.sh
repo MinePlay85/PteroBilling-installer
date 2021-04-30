@@ -251,7 +251,7 @@ ssl() {
       ;;
   esac
   # Obtain certificate
-  certbot --nginx --redirect -d "$FQDN"
+  certbot certonly -d "$FQDN"
 
   # Check if it succeded
   if [ ! -d "/etc/letsencrypt/live/$FQDN/" ]; then
