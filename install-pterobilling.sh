@@ -298,6 +298,7 @@ install_files() {
   ask_ssl
   ask_ssl_assume
   ssl
+  config
   config_nginx
 }
 
