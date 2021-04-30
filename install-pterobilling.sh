@@ -280,7 +280,7 @@ config_nginx() {
   echo "Nginx Config: "
 
   # Download config PteroBillng
-  curl -o /etc/nginx/sites-available/pterobilling.conf $GITHUB_BASE_URL/nginx-config/$CONFIG_FILE
+  curl -o /etc/nginx/sites-available/pterobilling.conf $BASE_URL/nginx-config/$CONFIG_FILE
 
   # Replace <domain> by Domain name
   sed -i -e "s@<domain>@${FQDN}@g" /etc/nginx/sites-available/pterobilling.conf
