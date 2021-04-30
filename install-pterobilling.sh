@@ -239,7 +239,6 @@ config() {
 
 # SSL Func #
 ssl() {
-  FAILED = false
 
   #Certbot
   case "$OS" in
@@ -252,10 +251,10 @@ ssl() {
       ;;
   esac
   # Obtain certificate
-  certbot --nginx --redirect -d "$FQDN" || FAILED=true
+  certbot --nginx --redirect -d "$FQDN"
 
   # Check if it succeded
-  if [ ! -d "/etc/letsencrypt/live/$FQDN/" ] || [ "$FAILED" == true ]; then
+  if [ ! -d "/etc/letsencrypt/live/$FQDN/" ]; then
     print_warning "The process of obtaining a SSL certificate failed!"
     echo -n "* Still assume SSL? (y/N): "
     read -r CONFIGURE_SSL
