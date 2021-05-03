@@ -24,13 +24,7 @@ fi
 if ! [ -x "$(command -v curl)" ]; then
   echo "* Installation aborted ! Curl is required."
   exit 1
-fi
-
-# Check if is the correct os
-if [ ! "$OS" == "debian" ]; then
-  echo "* Installation Aborted wrong choice ! not your OS"
-  exit 1
-fi  
+fi 
 
 # Visual func #
 error() {
