@@ -17,7 +17,9 @@ S_VERSION="0.0.1"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="" #Mark the sponsor link
 INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh" #Mark the installing link of all files
-DEP_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dependencies.sh"
+DEP_DEB_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dep-debian.sh"
+DEP_UBU_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dep-ubuntu.sh"
+DEP_CENT_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dep-centos.sh"
 
 # exit with error if user is not root
 if [[ $EUID -ne 0 ]]; then
@@ -68,33 +70,41 @@ release() {
   bash <(curl -s $INSTALL_LINK)
 }
 
-stop() {
-  exit
-  echo "Aborted !"
+dep_deb() {
+  bash <(curl -s $DEP_DEB_INSTALL_LINK)
 }
 
-dependency() {
-  bash <(curl -s $DEP_INSTALL_LINK)
+dep_centos() {
+  bash <(curl -s $DEP_CENT_INSTALL_LINK)
 }
+
+dep_ubu() {
+  bash <(curl -s $DEP_UBU_INSTALL_LINK)
+}  
 
 while [ "$finish" == false ]; do
   option=(
-    "Install PteroBilling And Dependencies ?"
+    "Install PteroBilling And Dependencies for Debian ?"
+    "Install PteroBilling And Dependencies for Ubuntu ?"
+    "Install PteroBilling And Dependencies for CentOS ?\n"
 
-    "Install PteroBilling ?"
-    "Install Dependencies ? (Before is recommended)"
+    "Install Dependencies for Debian ?"
+    "Install Dependencies for Ubuntu ?"
+    "Install Dependencies for CentOS ?\n"
 
-    "Don't Install it ?"
+    "Install PteroBilling"
   )
 
   actions=(
-    # if need to add more actions add here
-    "dependency; release"
-    
-    "release"
-    "dependency"
+    "dep_deb; release"
+    "dep_centos; release"
+    "dep_centos; release"
 
-    "stop"
+    "dep_deb"
+    "dep_centos"
+    "dep_centos"
+
+    "release"
   )
 
   output "Do you want to install PteroBilling ?"
