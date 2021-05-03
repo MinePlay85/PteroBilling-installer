@@ -70,7 +70,7 @@ release() {
   bash <(curl -s $INSTALL_LINK)
 }
 
-dep_deb() {
+dep() {
   bash <(curl -s $DEP_DEB_INSTALL_LINK)
 }
 
@@ -84,26 +84,16 @@ dep_ubu() {
 
 while [ "$finish" == false ]; do
   option=(
-    "Install PteroBilling And Dependencies for Debian ?"
-    "Install PteroBilling And Dependencies for Ubuntu ?"
-    "Install PteroBilling And Dependencies for CentOS ?\n"
-
-    "Install Dependencies for Debian ?"
-    "Install Dependencies for Ubuntu ?"
-    "Install Dependencies for CentOS ?\n"
-
+    "Install PteroBilling And Dependencies ?\n"
+ 
+    "Install dependencies
     "Install PteroBilling"
   )
 
   actions=(
-    "dep_deb; release"
-    "dep_centos; release"
-    "dep_centos; release"
+    "dep; release"
 
-    "dep_deb"
-    "dep_centos"
-    "dep_centos"
-
+    "dep"
     "release"
   )
 
