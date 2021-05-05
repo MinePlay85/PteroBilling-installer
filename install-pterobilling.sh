@@ -27,11 +27,17 @@ if ! [ -x "$(command -v curl)" ]; then
   exit 1
 fi
 
+# Check if is CentOS
+if [ "$OS" == "centos" ]; then
+  echo "The installer is not finished with centos"
+  exit 1
+fi
+
 update() {
   apt update -q -y && apt upgrade -y
 }
 
-echo -n "Do you want to add an FQDN (IP of your VPS if not have a domain) (e.g billing.pterobilling.xyz): "
+echo -n "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
 read -r FQDN
 
 # OS fucn #
@@ -186,24 +192,67 @@ hyperlink() {
   echo -e "\e]8;;${1}\a${1}\e]8;;\a"
 }
 
-ask_ssl() {
-  print_warning "if you want to use a SSL Certificates you need to have a domain (e.g billing.pterobilling.io) and you cannot use SSL if you use hostname as an IP you "
-  echo -e -n "& Do you want to configure HTTPS using a SSL Certificates ? [Y/N]: "
-  read -r SSL_CONF
-  if [[ "$SSL_CONF" =~ [yY] ]]; then
-    ASSUME_SSL=false
-  fi  
-}
+# Dependecies #
+dependencies() {
+  echo -n "Do you already have PHP8.0 ? (y/N): "
+  read -r ASKPHP
 
-ask_ssl_assume() {
-  echo "& SSL certificate will be configured by this script"
-  echo "& You can assume, the script will be diwnload nginx"
-  echo "& if you don't obain the SSL certificate, the installation can be failed"
-  echo -n "& Do you assume the SSL ? [Y/N]: "
-  read -r SSLA_INPUT
-  # Verify if the SSLA_INPUT is y
-  [[ "$SSLA_INPUT" =~ [yY] ]] && ASSUME_SSL=true
-  true
+  if [[ ! "$ASKPHP" =~ [yY] ]]; then 
+    #case "$OS" in 
+    #  debian | ubuntu)
+        sudo add-apt-repository ppa:ondrej/php
+        sudo apt install apt-transport-https lsb-release ca-certificates wget -y
+        sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+        sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+        sudo apt update
+        apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
+        systemctl enable php8.0-fpm
+        systemctl start php8.0-fpm
+    #    ;;
+    #  centos)
+      #later...
+    #  ;;
+    #esac
+  fi
+
+  echo -n "Do you already have composer ? (y/N): "
+  read -r ASKCOMPOSER
+
+  if [[ ! "$ASKCOMPOSER" =~ [yY] ]]; then 
+    echo "Installing composer.."
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    echo "Composer installed!"
+  fi
+
+  echo -n "You already installed MySQL ? (y/N): "
+  read -r MYSQLINSTALLATION
+
+  if [[ ! "$MYSQLINSTALLATION" =~ [yY] ]]; then
+    echo "Installing MariaDB..."
+    apt install -y mariadb-common mariadb-server mariadb-client
+    systemctl start mariadb
+    systemctl enable mariadb    
+    mysql_secure_installation
+  fi  
+
+  echo -n "You already nginx installed ? (y/N): "
+  read -r NGINX_INSTALL
+
+  if [[ ! "$NGINX_INSTALL" =~ [yY] ]]; then
+    apt install -y nginx
+    systemctl start nginx
+  fi
+
+  echo "* Create Database..."
+  echo "* Put MySQL root Password"
+  mysql -e "USE mysql;"
+  mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
+  mysql -e "CREATE DATABASE billing;"
+  mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
+  mysql -e "FLUSH PRIVILEGES;"
+
+  apt -y install redis-server
+  systemctl start redis-server
 }
 
 # dl pterobilling files
@@ -228,8 +277,6 @@ pterobilling_dl() {
 }
 
 config() {
-  app_url="http//$FQDN"
-  [ "$ASSUME_SSL" == true ] && app_url="https://$FQDN"
 
   php artisan migrate --seed --force  
   php artisan config:cache
@@ -255,27 +302,14 @@ ssl() {
   # Check if it succeded
   if [ ! -d "/etc/letsencrypt/live/$FQDN/" ]; then
     print_warning "The process of obtaining a SSL certificate failed!"
-    echo -n "* Still assume SSL? (y/N): "
-    read -r CONFIGURE_SSL
-
-    #if [[ "$CONFIGURE_SSL" =~ [Yy] ]]; then
-    #  SSL_ASSUME=true
-    #  CONFIG_SSL=false
-    #else
-    #  SSL_ASSUME=false
-    #  CONFIG_SSL=false
-    #fi
+    print_error "Installation aborted !"
   fi
 }
 
 # WebServer #
 config_nginx() {
-  #if [ $CONFIG_SSL == true ] && [ $SSL_ASSUME == false ]; then
-    CONFIG_FILE="ssl_nginx.conf"
-  #else
-  #  CONFIG_FILE="nginx.conf"
-  #fi  
-  echo "Nginx Config: "
+  CONFIG_FILE="ssl_nginx.conf"
+  echo "Nginx Config..."
 
   # Download config PteroBillng
   curl -o /etc/nginx/sites-available/pterobilling.conf $BASE_URL/nginx-config/$CONFIG_FILE
@@ -288,10 +322,8 @@ config_nginx() {
 }
 
 install_files() {
-  [ ! "$OS" == "centos" ]
+  dependencies
   pterobilling_dl
-  ask_ssl
-  ask_ssl_assume
   config_nginx
   config
   ssl
@@ -299,7 +331,7 @@ install_files() {
 
 bye() {
   echo "* Installation Finished ! Enjoy ! Bye! "
-  exit
+  exit 1
 }
 
 #run script
