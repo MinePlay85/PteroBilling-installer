@@ -3,7 +3,7 @@
     <h3>A simply installer for Install PteroBilling-installer</h3>
     <br>
     <img src="https://raw.githubusercontent.com/pterobilling/pterobilling/master/.github/preview_1_dark.png" alt="Preview" width="40%">
-    <img src="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/img/command.png" alt="Preview" width="40%">
+    <img src="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/img/commandssh.png" alt="Preview" width="40%">
     </br>
     <h3>You can use it Now !</h3>
 </div>
