@@ -13,13 +13,10 @@ set -e
 #   
 ###########
 
-S_VERSION="0.0.1"
+S_VERSION="0.5"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
-SPONSOR="" #Mark the sponsor link
-INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh" #Mark the installing link of all files
-DEP_DEB_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dep-debian.sh"
-DEP_UBU_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dep-ubuntu.sh"
-DEP_CENT_INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-dep-centos.sh"
+SPONSOR="" 
+INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh"
 
 # exit with error if user is not root
 if [[ $EUID -ne 0 ]]; then
@@ -66,45 +63,33 @@ output ""
 
 output
 
-release() {
+billinginstall() {
   bash <(curl -s $INSTALL_LINK)
 }
 
-dep_deb() {
-  bash <(curl -s $DEP_DEB_INSTALL_LINK)
+stop() {
+  echo "* Installation Aborted"
+  exit 1
 }
 
-dep_centos() {
-  bash <(curl -s $DEP_CENT_INSTALL_LINK)
+update() {
+  echo "PteroBilling not released ! Impossible to install the update"
+  exit 1
 }
-
-dep_ubu() {
-  bash <(curl -s $DEP_UBU_INSTALL_LINK)
-}  
 
 while [ "$finish" == false ]; do
   option=(
-    "Install PteroBilling And Dependencies for Debian ?"
-    "Install PteroBilling And Dependencies for Ubuntu ?"
-    "Install PteroBilling And Dependencies for CentOS ?\n"
-
-    "Install Dependencies for Debian ?"
-    "Install Dependencies for Ubuntu ?"
-    "Install Dependencies for CentOS ?\n"
-
     "Install PteroBilling"
+    "Update PteroBilling to the latest\n"
+
+    "Don't install it"
   )
 
   actions=(
-    "dep_deb; release"
-    "dep_centos; release"
-    "dep_centos; release"
+    "billinginstall"
+    "update"
 
-    "dep_deb"
-    "dep_centos"
-    "dep_centos"
-
-    "release"
+    "stop"
   )
 
   output "Do you want to install PteroBilling ?"
