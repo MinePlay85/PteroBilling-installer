@@ -198,8 +198,8 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-    case "$OS" in 
-      debian | ubuntu)
+    #case "$OS" in 
+    #  debian | ubuntu)
         sudo add-apt-repository ppa:ondrej/php
         sudo apt install apt-transport-https lsb-release ca-certificates wget -y
         sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
@@ -208,11 +208,11 @@ dependencies() {
         apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
         systemctl enable php8.0-fpm
         systemctl start php8.0-fpm
-        ;;
-      centos)
+    #    ;;
+    #  centos)
       #later...
-      ;;
-    esac
+    #  ;;
+    #esac
   fi
 
   echo -n "Do you already have composer ? (y/N): "
