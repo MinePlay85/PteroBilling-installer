@@ -38,49 +38,29 @@ update() {
 echo -n "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
 read -r FQDN
 
-# OS fucn #
+# OS func #
 
 detect_distro() {
-  if [ -f /etc/os-release ]; then
-    # freedesktop.org and systemd
-    . /etc/os-release
-    OS=$(echo "$ID" | awk '{print tolower($0)}')
-    OS_VER=$VERSION_ID
-  elif type lsb_release >/dev/null 2>&1; then
-    # linuxbase.org
-    OS=$(lsb_release -si | awk '{print tolower($0)}')
-    OS_VER=$(lsb_release -sr)
-  elif [ -f /etc/lsb-release ]; then
-    # For some versions of Debian/Ubuntu without lsb_release command
-    . /etc/lsb-release
-    OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
-    OS_VER=$DISTRIB_RELEASE
-  elif [ -f /etc/debian_version ]; then
-    # Older Debian/Ubuntu/etc.
-    OS="debian"
-    OS_VER=$(cat /etc/debian_version)
-  elif [ -f /etc/SuSe-release ]; then
-    # Older SuSE/etc.
-    OS="SuSE"
-    OS_VER="?"
-  elif [ -f /etc/redhat-release ]; then
-    # Older Red Hat, CentOS, etc.
-    OS="Red Hat/CentOS"
-    OS_VER="?"
-  else
-    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-    OS=$(uname -s)
-    OS_VER=$(uname -r)
+  OS=$(awk '/DISTRIB_ID=/' /etc/*-release | sed 's/DISTRIB_ID=//' | tr '[:upper:]' '[:lower:]')
+  ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+  VERSION=$(awk '/DISTRIB_RELEASE=/' /etc/*-release | sed 's/DISTRIB_RELEASE=//' | sed 's/[.]0/./')
+
+  if [ -z "$OS" ]; then
+    OS=$(awk '{print $1}' /etc/*-release | tr '[:upper:]' '[:lower:]')
   fi
 
-  OS=$(echo "$OS" | awk '{print tolower($0)}')
-  OS_VER_MAJOR=$(echo "$OS_VER" | cut -d. -f1)
+  if [ -z "$VERSION" ]; then
+    VERSION=$(awk '{print $3}' /etc/*-release)
+  fi
+
+  echo "Your OS Version: $OS"
+  echo "Your CPU ARCH $ARCH"
+  echo "Your OS Version: $VERSION"
 }
 
 cpu_comp() {
-  CPU_ARCH=$(uname -m)
-  if [ "${CPU_ARCH}" != "x86_64" ]; then 
-    print_warning "Detected CPU architecture $CPU_ARCH"
+  if [ "${ARCH}" != "x86_64" ]; then 
+    print_warning "Detected CPU architecture $ARCH"
     print_warning "Using any another CPU than 64 bit (x86_64) will be cause problem"
 
     echo -e  -n "& Are you sure you want to proceed? [Y/n]"
@@ -111,15 +91,6 @@ cpu_comp() {
     *)
       SUPPORTED=false ;;
   esac     
-
-  # exit if not supported
-  if [ "$SUPPORTED" == true ]; then
-    echo "* $OS $OS_VER is supported."
-  else
-    echo "* $OS $OS_VER is not supported"
-    print_error "Unsupported OS"
-    exit 1
-  fi
 }
 
 # Variables #
@@ -196,8 +167,8 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-    #case "$OS" in 
-    #  debian | ubuntu)
+    case "$OS" in 
+      debian | ubuntu)
         sudo add-apt-repository ppa:ondrej/php
         sudo apt install apt-transport-https lsb-release ca-certificates wget -y
         sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
@@ -206,11 +177,11 @@ dependencies() {
         apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
         systemctl enable php8.0-fpm
         systemctl start php8.0-fpm
-    #    ;;
-    #  centos)
-      #later...
-    #  ;;
-    #esac
+        ;;
+      centos)
+        #later...
+        ;;
+    esac
   fi
 
   echo -n "Do you already have composer ? (y/N): "
@@ -320,6 +291,7 @@ config_nginx() {
 }
 
 install_files() {
+  detect_distro
   dependencies
   pterobilling_dl
   config_nginx
