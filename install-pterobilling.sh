@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e 
 
 ###########
@@ -56,41 +58,6 @@ detect_distro() {
   echo "Your OS Version: $OS"
   echo "Your CPU ARCH $ARCH"
   echo "Your OS Version: $VERSION"
-}
-
-cpu_comp() {
-  if [ "${ARCH}" != "x86_64" ]; then 
-    print_warning "Detected CPU architecture $ARCH"
-    print_warning "Using any another CPU than 64 bit (x86_64) will be cause problem"
-
-    echo -e  -n "& Are you sure you want to proceed? [Y/n]"
-    read -r choice
-    if [[ ! "$choice" =~ [Yy] ]]; then
-      print_error "Installation Failed!"
-      exit 1
-    fi
-  fi
-
-  # OS 
-  case "$OS" in
-    ubuntu)
-      PHP_SOCKET="/run/php/php8.0-fpm.sock"
-      [ "$OS_VER_MAJOR" == "18" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "20" ] && SUPPORTED=true
-      ;;
-    debian)
-      PHP_SOCKET="/run/php/php8.0-fpm.sock"
-      [ "$OS_VER_MAJOR" == "9" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "10" ] && SUPPORTED=true
-      ;;
-    centos)
-      PHP_SOCKET="/var/run/php-fpm/pterodactyl.sock"
-      [ "$OS_VER_MAJOR" == "7" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "8" ] && SUPPORTED=true
-      ;;
-    *)
-      SUPPORTED=false ;;
-  esac     
 }
 
 # Variables #
@@ -167,21 +134,34 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-    case "$OS" in 
-      debian | ubuntu)
-        sudo add-apt-repository ppa:ondrej/php
-        sudo apt install apt-transport-https lsb-release ca-certificates wget -y
-        sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
-        sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-        sudo apt update
-        apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
-        systemctl enable php8.0-fpm
-        systemctl start php8.0-fpm
-        ;;
-      centos)
-        #later...
-        ;;
-    esac
+    if [ "$OS" == "debian" && "$OS" == "ubuntu" ]; then
+      sudo add-apt-repository ppa:ondrej/php
+      sudo apt install apt-transport-https lsb-release ca-certificates wget -y
+      sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+      sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+      sudo apt update
+      apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
+      systemctl enable php8.0-fpm
+      systemctl start php8.0-fpm
+    elif [ "$OS" == "centos" && "$VERSIION" == "8" ]; then
+      sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+      sudo dnf module list PHP
+      sudo dnf module enable php:remi-8.0 -y
+      sudo dnf install php php-cli php-common
+      sudo dnf install php php-cli php-common php-fpm
+      sudo systemctl restart httpd
+      sudo systemctl restart nginx
+    elif [ "$OS" == "centos" && "$VERSION" == "7" ]; then
+      sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      sudo dnf module list PHP
+      sudo dnf module enable php:remi-8.0 -y
+      sudo dnf install php php-cli php-common
+      sudo dnf install php php-cli php-common php-fpm
+      sudo systemctl restart httpd
+      sudo systemctl restart nginx
+    fi
   fi
 
   echo -n "Do you already have composer ? (y/N): "
@@ -212,14 +192,18 @@ dependencies() {
     systemctl start nginx
   fi
 
-  echo "* Create Database..."
-  echo "* Put MySQL root Password"
-  mysql -e "USE mysql;"
-  mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
-  mysql -e "CREATE DATABASE billing;"
-  mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
-  mysql -e "FLUSH PRIVILEGES;"
+  echo -n "You already setup database ? (y/N): "
+  read -r DBSETUP
 
+  if [[ ! "$DPSETUP" =~ [Yy] ]]; then
+    echo "* Create Database..."
+    echo "* Put MySQL root Password"
+    mysql -e "USE mysql;"
+    mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
+    mysql -e "CREATE DATABASE billing;"
+    mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
+    mysql -e "FLUSH PRIVILEGES;"
+  fi
   apt -y install redis-server
   systemctl start redis-server
 }
