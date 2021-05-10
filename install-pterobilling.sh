@@ -195,7 +195,7 @@ dependencies() {
   echo -n "You already setup database ? (y/N): "
   read -r DBSETUP
 
-  if [[ ! "$DPSETUP" =~ [Yy] ]]; then
+  if [[ ! "$DBSETUP" =~ [Yy] ]]; then
     echo "* Create Database..."
     echo "* Put MySQL root Password"
     mysql -e "USE mysql;"
