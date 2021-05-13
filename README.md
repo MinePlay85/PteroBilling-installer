@@ -29,6 +29,6 @@ NOTE: CentOS doesn't work with the installer i will resove it in 1 or 2 weeks
 |                  | 20.04   | :white_check_mark: |
 | Debian           | 9       | :white_check_mark: |
 |                  | 10      | :white_check_mark: |
-| CentOS           | 6       | :x:                |
-|                  | 7       | :x:                |
-|                  | 8       | :x:                |
+| CentOS           | 6       | :x: SOON           |
+|                  | 7       | :x: SOON           |
+|                  | 8       | :x: SOON           |
