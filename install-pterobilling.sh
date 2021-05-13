@@ -38,7 +38,7 @@ if [ ! "$OS" == "centos" ]; then
   echo "$OS"
   echo -n "Work ? (y/N): "
   read -r WORK
-  if [[ "$WORK" ~= [yY] ]]; then
+  if [[ "$WORK" =~ [yY] ]]; then
     echo "Good !"
   fi  
 
