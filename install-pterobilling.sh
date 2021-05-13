@@ -134,16 +134,16 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-    if [ "$OS" == "debian" || "$OS" == "ubuntu" ]; then
+    if [ "$OS" == "debian" ] && [ "$OS" == "ubuntu" ]; then
       sudo add-apt-repository ppa:ondrej/php
       sudo apt install apt-transport-https lsb-release ca-certificates wget -y
       sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
       sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
       sudo apt update
       apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
-      systemctl enable php8.0-fpm
+      systemctl enable php8.0-fpm 
       systemctl start php8.0-fpm
-    elif [ "$OS" == "centos" || "$VERSIION" == "8" ]; then
+    elif [ "$OS" == "centos" ] && [ "$VERSION" == "8" ]; then
       sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
       sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
       sudo dnf module list PHP
@@ -152,7 +152,7 @@ dependencies() {
       sudo dnf install php php-cli php-common php-fpm
       sudo systemctl restart httpd
       sudo systemctl restart nginx
-    elif [ "$OS" == "centos" || "$VERSION" == "7" ]; then
+    elif [ "$OS" == "centos" ] && [ "$VERSION" == "7" ]; then
       sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
       sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
       sudo dnf module list PHP
