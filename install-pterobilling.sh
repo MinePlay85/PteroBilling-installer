@@ -38,6 +38,7 @@ if [ ! "$OS" == "centos" ]; then
   echo "$OS"
   echo -n "Work ? (y/N): "
   echo "Good"
+fi  
 
 update() {
   apt update -q -y && apt upgrade -y
