@@ -243,13 +243,18 @@ dependencies() {
     systemctl start nginx
   fi
 
-  echo "* Create Database..."
-  echo "* Put MySQL root Password"
-  mysql -e "USE mysql;"
-  mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
-  mysql -e "CREATE DATABASE billing;"
-  mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
-  mysql -e "FLUSH PRIVILEGES;"
+  echo -n "You already Setup MySQL database ? (y/N): "
+  read -r MYSQL_USER_CHECK
+  
+  if [[ ! "$MYSQL_USER_CHECK" =~ [yY] ]]; then
+    echo "* Create Database..."
+    echo "* Put MySQL root Password"
+    mysql -e "USE mysql;"
+    mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
+    mysql -e "CREATE DATABASE billing;"
+    mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
+    mysql -e "FLUSH PRIVILEGES;"
+  fi
 
   apt -y install redis-server
   systemctl start redis-server
