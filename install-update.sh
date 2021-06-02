@@ -31,7 +31,7 @@ fi
 echo -n "Do you want to install the update (this is in no-stable the pterobilling app can be obstructed).  [Y/N]: "
 read -r INSTALLYES
 
-if [[ ! "$INSTALLYES" ~= [Yy] ]]; then 
+if [[ ! "$INSTALLYES" =~ [Yy] ]]; then 
   echo "INSTALLATION ABORTED !"
   exit 1
 fi
