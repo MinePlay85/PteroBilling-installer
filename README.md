@@ -11,11 +11,10 @@
 ## Installation (How to use it ?)
 Go to your SSH root. (Use PuTTY or anymore ssh client)
 - Execute the following command:
-```bash <(curl -s https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install.sh)```
-(A domain will be pay by me)
+```bash <(curl -s https://installer.pterobilling.org/install.sh)```
 
 ## Documentations
-You can read alaister documentation: [Official PteroBilling docs](https://project.alaister.net)
+You can read documentation: [Official PteroBilling docs](https://docs.pterobilling.org)
 
 ## Other Link of PteroBilling
 [Official PteroBilling Discord](https://discord.gg/EjHe3QpJjd)
