@@ -56,15 +56,18 @@ read -r DBNAME
 echo -n -e "${GREEN}What is your Database User ? ${YELLOW}(pterobilling)${reset}: "
 read -r DBUSER
 
+echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
+read -s DBPASS
+
 while true; do
-  echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
-  read -s DBPASS
+  #echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
+  #read -s DBPASS
   if [[ "$DBPASS" == "" ]]; then
     echo -e "${red}The Password must be required !"
     echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
     read -s DBPASS
   else
-    echo -e "${GREEN}Password is Okay !" 
+    echo -e "${GREEN}Password is Okay !${reset}" 
     break 
   fi
 done
