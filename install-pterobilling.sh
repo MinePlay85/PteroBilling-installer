@@ -56,11 +56,11 @@ read -r DBNAME
 echo -n -e "${GREEN}What is your Database User ? ${YELLOW}(pterobilling)${reset}: "
 read -r DBUSER
 
-echo -n -e "${GREEN}What is your Database Hostname ?${reset}: " "${red}The Password cannot be empty${reset} "
+echo -n -e "${GREEN}What is your Database Password ?${reset}: "
 read -s DBPASS
 
 if [ -n "$result" ]; then
-  echo -n -e "${red}The Password cannot be null ${GREEN}What is your Database Hostname ?${reset}: " 
+  echo -n -e "${red}The Password cannot be null ${GREEN}What is your Database Password ?${reset}: " 
   read -s DBPASS
 fi
 
