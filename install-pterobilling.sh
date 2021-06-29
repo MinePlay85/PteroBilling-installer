@@ -59,7 +59,7 @@ read -r DBUSER
 echo -n -e "${GREEN}What is your Database Password ?${reset}: "
 read -s DBPASS
 
-if [ -n "$result" ]; then
+if [ -n "$DBPASS" ]; then
   echo -n -e "${red}The Password cannot be null ${GREEN}What is your Database Password ?${reset}: " 
   read -s DBPASS
 fi
