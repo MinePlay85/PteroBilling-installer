@@ -50,15 +50,28 @@ read -r FQDN
 echo -n -e "${GREEN}What is your Database Hostname ? ${YELLOW}(127.0.0.1)${reset}: "
 read -r DBHOST
 
+if [[ "$DBHOST" == "" ]]; then
+  DBHOST="127.0.0.1"
+fi
+
 echo -n -e "${GREEN}What is your Database Name ? ${YELLOW}(billing)${reset}: "
 read -r DBNAME
+
+if [[ "$DBNAME" == "" ]]; then
+  DBNAME="billing"  
+fi
 
 echo -n -e "${GREEN}What is your Database User ? ${YELLOW}(pterobilling)${reset}: "
 read -r DBUSER
 
+if [[ "$DBUSER" == "" ]]; then
+  DBUSER="pterobilling"  
+fi
+
 echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
 read -s DBPASS
 
+# While if Password have input !
 while true; do
   #echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
   #read -s DBPASS
@@ -229,8 +242,10 @@ pterobilling_dl() {
   chown -R www-data:www-data /var/www/pterobilling
 
   sed -i -e "s@127.0.0.1@${DBHOST}@g" /var/www/pterobilling/.env
-  sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env
+  sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env 
   sed -i -e "s@billing@${DBNAME}@g" /var/www/pterobilling/.env
+#sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env
+  #sed -i -e "s@billing@${DBNAME}@g" /var/www/pterobilling/.env
   sed -i -e "s@password@${DBPASS}@g" /var/www/pterobilling/.env
 
   # .env
