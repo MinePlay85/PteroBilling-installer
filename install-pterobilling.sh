@@ -37,29 +37,32 @@ fi
 # Thanks to https://techstop.github.io/bash-script-colors/ for color code
 GREEN="\e[0;92m"
 YELLOW="\033[1;33m"
+reset="\e[0m"
+red='\033[0;31m'
 
 update() {
   apt update -q -y && apt upgrade -y
 }
 
-echo -n "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
+echo -n -e "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
 read -r FQDN
 
-echo -n "${GREEN}What is your Database Hostname ? ${YELLOW}(127.0.0.1): "
+echo -n -e "${GREEN}What is your Database Hostname ? ${YELLOW}(127.0.0.1)${reset}: "
 read -r DBHOST
 
-echo -n "${GREEN}What is your Database Name ? ${YELLOW}(billing): "
+echo -n -e "${GREEN}What is your Database Name ? ${YELLOW}(billing)${reset}: "
 read -r DBNAME
 
-echo -n "${GREEN}What is your Database User ? ${YELLOW}(pterobilling): "
+echo -n -e "${GREEN}What is your Database User ? ${YELLOW}(pterobilling)${reset}: "
 read -r DBUSER
 
-rdm_print() {
-  tr -dc 'A-Za-z0-9!"#$%&()*+,-./:;<=>?@[\]^_`{|}~' </dev/urandom | head -c 64
-  echo
-}
+echo -n -e "${GREEN}What is your Database Hostname ?${reset}: " "${red}The Password cannot be empty${reset} "
+read -s DBPASS
 
-password_input DBPASS "${GREEN}What is your Database Hostname ?: " "The Password cannot be empty" "$rdm_print"
+if [ -n "$result" ]; then
+  echo -n -e "${red}The Password cannot be null ${GREEN}What is your Database Hostname ?${reset}: " 
+  read -s DBPASS
+fi
 
 # OS fucn #
 
