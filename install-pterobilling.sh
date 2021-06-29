@@ -244,7 +244,7 @@ pterobilling_dl() {
   sed -i -e "s@127.0.0.1@${DBHOST}@g" /var/www/pterobilling/.env
   sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env 
   sed -i -e "s@billing@${DBNAME}@g" /var/www/pterobilling/.env
-#sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env
+  #sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env
   #sed -i -e "s@billing@${DBNAME}@g" /var/www/pterobilling/.env
   sed -i -e "s@password@${DBPASS}@g" /var/www/pterobilling/.env
 
@@ -311,7 +311,19 @@ install_files() {
 }
 
 bye() {
-  echo "* Installation Finished ! Enjoy ! Bye! "
+  echo "----------------------"
+  echo "The Installation is Finished !"
+  echo "PteroBilling Docs: https://docs.pterobilling.org"
+  echo "PteroBilling WebSite: https://pterobilling.org"
+  echo "PteroBilling Discord: https://discord.gg/EjHe3QpJjd"
+  echo "Your Information: "
+  echo "FQDN: ${FQDN}"
+  echo "MySQL Database Name: ${DBNAME}"
+  echo "MySQL Database Hostname: ${DBHOST}"
+  echo "MySQL Database Username: ${DBUSER}"
+  echo "Pterobilling Folder Path: /var/www/pterobilling"
+  echo "env File Path: /var/www/pterobilling/.env"
+  echo "----------------------"
   exit 1
 }
 
