@@ -33,6 +33,11 @@ if [ "$OS" == "centos" ]; then
   exit 1
 fi
 
+# Color #
+# Thanks to https://techstop.github.io/bash-script-colors/ for color code
+GREEN="\e[0;92m"
+YELLOW="\033[1;33m"
+
 update() {
   apt update -q -y && apt upgrade -y
 }
@@ -40,89 +45,27 @@ update() {
 echo -n "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
 read -r FQDN
 
+echo -n "${GREEN}What is your Database Hostname ? ${YELLOW}(127.0.0.1): "
+read -r DBHOST
+
+echo -n "${GREEN}What is your Database Name ? ${YELLOW}(billing): "
+read -r DBNAME
+
+echo -n "${GREEN}What is your Database User ? ${YELLOW}(pterobilling): "
+read -r DBUSER
+
+rdm_print() {
+  tr -dc 'A-Za-z0-9!"#$%&()*+,-./:;<=>?@[\]^_`{|}~' </dev/urandom | head -c 64
+  echo
+}
+
+password_input DBPASS "${GREEN}What is your Database Hostname ?: " "The Password cannot be empty" "$rdm_print"
+
 # OS fucn #
 
-detect_distro() {
-  if [ -f /etc/os-release ]; then
-    # freedesktop.org and systemd
-    . /etc/os-release
-    OS=$(echo "$ID" | awk '{print tolower($0)}')
-    OS_VER=$VERSION_ID
-  elif type lsb_release >/dev/null 2>&1; then
-    # linuxbase.org
-    OS=$(lsb_release -si | awk '{print tolower($0)}')
-    OS_VER=$(lsb_release -sr)
-  elif [ -f /etc/lsb-release ]; then
-    # For some versions of Debian/Ubuntu without lsb_release command
-    . /etc/lsb-release
-    OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
-    OS_VER=$DISTRIB_RELEASE
-  elif [ -f /etc/debian_version ]; then
-    # Older Debian/Ubuntu/etc.
-    OS="debian"
-    OS_VER=$(cat /etc/debian_version)
-  elif [ -f /etc/SuSe-release ]; then
-    # Older SuSE/etc.
-    OS="SuSE"
-    OS_VER="?"
-  elif [ -f /etc/redhat-release ]; then
-    # Older Red Hat, CentOS, etc.
-    OS="Red Hat/CentOS"
-    OS_VER="?"
-  else
-    # Fall back to uname, e.g. "Linux <version>", also works for BSD, etc.
-    OS=$(uname -s)
-    OS_VER=$(uname -r)
-  fi
-
-  OS=$(echo "$OS" | awk '{print tolower($0)}')
-  OS_VER_MAJOR=$(echo "$OS_VER" | cut -d. -f1)
-}
-
-cpu_comp() {
-  CPU_ARCH=$(uname -m)
-  if [ "${CPU_ARCH}" != "x86_64" ]; then 
-    print_warning "Detected CPU architecture $CPU_ARCH"
-    print_warning "Using any another CPU than 64 bit (x86_64) will be cause problem"
-
-    echo -e  -n "& Are you sure you want to proceed? [Y/n]"
-    read -r choice
-    if [[ ! "$choice" =~ [Yy] ]]; then
-      print_error "Installation Failed!"
-      exit 1
-    fi
-  fi
-
-  # OS 
-  case "$OS" in
-    ubuntu)
-      PHP_SOCKET="/run/php/php8.0-fpm.sock"
-      [ "$OS_VER_MAJOR" == "18" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "20" ] && SUPPORTED=true
-      ;;
-    debian)
-      PHP_SOCKET="/run/php/php8.0-fpm.sock"
-      [ "$OS_VER_MAJOR" == "9" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "10" ] && SUPPORTED=true
-      ;;
-    centos)
-      PHP_SOCKET="/var/run/php-fpm/pterodactyl.sock"
-      [ "$OS_VER_MAJOR" == "7" ] && SUPPORTED=true
-      [ "$OS_VER_MAJOR" == "8" ] && SUPPORTED=true
-      ;;
-    *)
-      SUPPORTED=false ;;
-  esac     
-
-  # exit if not supported
-  if [ "$SUPPORTED" == true ]; then
-    echo "* $OS $OS_VER is supported."
-  else
-    echo "* $OS $OS_VER is not supported"
-    print_error "Unsupported OS"
-    exit 1
-  fi
-}
+OS=$(awk '/DISTRIB_ID=/' /etc/*-release | sed 's/DISTRIB_ID=//' | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+VERSION=$(awk '/DISTRIB_RELEASE=/' /etc/*-release | sed 's/DISTRIB_RELEASE=//' | sed 's/[.]0/./')
 
 # Variables #
 
@@ -198,12 +141,21 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-    apt install ca-certificates apt-transport-https lsb-release -y
-    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-    apt update
-    apt -y install php8.0 php8.0-{cli,gd,mysql,pdo,mbstring,tokenizer,bcmath,xml,fpm,curl,zip} mariadb-server nginx curl tar unzip git redis-server cron
-    systemctl start php8.0-fpm
+    #case "$OS" in 
+    #  debian | ubuntu)
+        sudo add-apt-repository ppa:ondrej/php
+        sudo apt install apt-transport-https lsb-release ca-certificates wget -y
+        sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
+        sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+        sudo apt update
+        apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
+        systemctl enable php8.0-fpm
+        systemctl start php8.0-fpm
+    #    ;;
+    #  centos)
+      #later...
+    #  ;;
+    #esac
   fi
 
   echo -n "Do you already have composer ? (y/N): "
@@ -241,9 +193,9 @@ dependencies() {
     echo "* Create Database..."
     echo "* Put MySQL root Password"
     mysql -e "USE mysql;"
-    mysql -e "CREATE USER 'pterobilling'@'127.0.0.1' IDENTIFIED BY 'password';"
-    mysql -e "CREATE DATABASE billing;"
-    mysql -p -e "GRANT ALL PRIVILEGES ON billing.* TO 'pterobilling'@'127.0.0.1' WITH GRANT OPTION;"
+    mysql -e "CREATE USER '${DBUSER}'@'${DBHOST}' IDENTIFIED BY '${DBPASS}';"
+    mysql -e "CREATE DATABASE ${DBNAME};"
+    mysql -p -e "GRANT ALL PRIVILEGES ON ${DBNAME}.* TO '${DBUSER}'@'${DBHOST}' WITH GRANT OPTION;"
     mysql -e "FLUSH PRIVILEGES;"
   fi
 
@@ -264,6 +216,11 @@ pterobilling_dl() {
   composer create-project
   chmod -R 755 /var/www/pterobilling
   chown -R www-data:www-data /var/www/pterobilling
+
+  sed -i -e "s@127.0.0.1@${DBHOST}@g" /var/www/pterobilling/.env
+  sed -i -e "s@pterobilling@${DBUSER}@g" /var/www/pterobilling/.env
+  sed -i -e "s@billing@${DBNAME}@g" /var/www/pterobilling/.env
+  sed -i -e "s@password@${DBPASS}@g" /var/www/pterobilling/.env
 
   # .env
   [ "$OS" == "centos" ] && export PATH=/usr/local/bin:$PATH
