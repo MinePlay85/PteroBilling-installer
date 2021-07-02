@@ -64,7 +64,7 @@ if [[ "$DBUSER" == "" ]]; then
   DBUSER="pterobilling"  
 fi
 
-echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
+echo -n -e "${GREEN}What is your Database Password ?${reset}: "
 read -s -r DBPASS
 
 # While if Password have input !
@@ -73,7 +73,7 @@ while true; do
   #read -s DBPASS
   if [[ "$DBPASS" == "" ]]; then
     echo -e "${red}The Password must be required !"
-    echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
+    echo -n -e "${GREEN}What is your Database Password ?${reset}: "
     read -s -r DBPASS
   else
     echo -e "${GREEN}Password is Okay !${reset}" 
@@ -87,9 +87,9 @@ OS=$(awk '/DISTRIB_ID=/' /etc/*-release | sed 's/DISTRIB_ID=//' | tr '[:upper:]'
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 VERSION=$(awk '/DISTRIB_RELEASE=/' /etc/*-release | sed 's/DISTRIB_RELEASE=//' | sed 's/[.]0/./')
 
-echo "$OS"
-echo "$ARCH"
-echo "$VERSION"
+echo -e "$OS"
+echo -e "$ARCH"
+echo -e "$VERSION"
 
 # Variables #
 
