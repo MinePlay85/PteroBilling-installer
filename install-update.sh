@@ -1,6 +1,6 @@
-#!bin/bash
+#!/bin/bash
 
-set -
+set -e
 
 
 ###
@@ -45,11 +45,11 @@ update() {
 update_pterobilling() {
     echo "* Pterobilling Updating files..."
 
-    cd /var/www
+    cd /var/www || exit
     cp pterobilling pterobilling-backup
-    cd /var/www/pterobilling
+    cd /var/www/pterobilling || exit
     php artisan down
-    cd /var/www
+    cd /var/www || exit
     composer create-project pterobilling/pterobilling pterobilling --stability=dev --no-dev
     chmod -R 755 /var/www/pterobilling
     chown -R www-data:www-data /var/www/pterobilling
