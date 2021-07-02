@@ -27,8 +27,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Check install shell script
-        run: shellcheck -e install.sh
-        
-        
-      - name: Check pterobilling install shell script
-        run: shellcheck -e install-pterobilling.sh
+        run: echo "hello"
