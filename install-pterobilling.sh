@@ -40,10 +40,6 @@ YELLOW="\033[1;33m"
 reset="\e[0m"
 red='\033[0;31m'
 
-update() {
-  apt update -q -y && apt upgrade -y
-}
-
 echo -n -e "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
 read -r FQDN
 
@@ -69,7 +65,7 @@ if [[ "$DBUSER" == "" ]]; then
 fi
 
 echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
-read -s DBPASS
+read -s -r DBPASS
 
 # While if Password have input !
 while true; do
@@ -78,7 +74,7 @@ while true; do
   if [[ "$DBPASS" == "" ]]; then
     echo -e "${red}The Password must be required !"
     echo -n -e "${GREEN}What is your Database Password ?${reset}: \n"
-    read -s DBPASS
+    read -s -r DBPASS
   else
     echo -e "${GREEN}Password is Okay !${reset}" 
     break 
@@ -91,27 +87,31 @@ OS=$(awk '/DISTRIB_ID=/' /etc/*-release | sed 's/DISTRIB_ID=//' | tr '[:upper:]'
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 VERSION=$(awk '/DISTRIB_RELEASE=/' /etc/*-release | sed 's/DISTRIB_RELEASE=//' | sed 's/[.]0/./')
 
+echo "$OS"
+echo "$ARCH"
+echo "$VERSION"
+
 # Variables #
 
 # Version of the Program
-GITHUB_SOURCE="master"
-SCRIPT_VERSION="lastest"
+#GITHUB_SOURCE="master"
+#SCRIPT_VERSION="lastest"
 
 # Download URL
-BILLING_DL_URL="https://github.com/pterobilling/pterobilling/releases/lastest/download/pterobilling.tar.gz"
+#BILLING_DL_URL="https://github.com/pterobilling/pterobilling/releases/lastest/download/pterobilling.tar.gz"
 BASE_URL="https://raw.githubusercontent.com/MinePlay85/PteroBilling-Installer/master" #Mark link when the repo was created
 GIT_CLONE_URL="https://github.com/pterobilling/pterobilling"
 
 # Check Version #
-get_latest_version() {
-    curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
-    grep '"tag_name":' | # get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
-}
+#get_latest_version() {
+#    curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
+#    grep '"tag_name":' | # get tag line
+ #   sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
+#}
 
 # version of pterobilling
-echo "* Getting release information"
-PTEROBILLING_VERSION="$(get_latest_version "pterobilling/pterobilling")"
+#echo "* Getting release information"
+#PTEROBILLING_VERSION="$(get_latest_version "pterobilling/pterobilling")"
 
 # function lib #
 array_contains_element() {
@@ -171,7 +171,7 @@ dependencies() {
         sudo apt install apt-transport-https lsb-release ca-certificates wget -y
         sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
         sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
-        sudo apt update
+        sudo apt-get update
         apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
         systemctl enable php8.0-fpm
         systemctl start php8.0-fpm
@@ -230,6 +230,7 @@ dependencies() {
 # dl pterobilling files
 pterobilling_dl() {
   echo "* Downloading Pterobilling Files..."
+  apt update -qq && apt-get full-upgrade
   cd /var/www 
 
   #Composer Install Files
