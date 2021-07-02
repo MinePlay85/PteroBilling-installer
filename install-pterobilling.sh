@@ -94,7 +94,7 @@ echo "$VERSION"
 # Variables #
 
 # Version of the Program
-#GITHUB_SOURCE="master"
+GITHUB_SOURCE="master"
 #SCRIPT_VERSION="lastest"
 
 # Download URL
@@ -103,15 +103,15 @@ BASE_URL="https://raw.githubusercontent.com/MinePlay85/PteroBilling-Installer/ma
 GIT_CLONE_URL="https://github.com/pterobilling/pterobilling"
 
 # Check Version #
-#get_latest_version() {
-#    curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
-#    grep '"tag_name":' | # get tag line
- #   sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
-#}
+get_latest_version() {
+    curl --silent "https://api.github.com/repos/$1/releases/lastest" | #Install lastest version of GitHub API
+    grep '"tag_name":' | # get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'  # pluck json value
+}
 
 # version of pterobilling
-#echo "* Getting release information"
-#PTEROBILLING_VERSION="$(get_latest_version "pterobilling/pterobilling")"
+echo "* Getting release information"
+PTEROBILLING_VERSION="$(get_latest_version "pterobilling/pterobilling")"
 
 # function lib #
 array_contains_element() {
@@ -324,6 +324,8 @@ bye() {
   echo "MySQL Database Username: ${DBUSER}"
   echo "Pterobilling Folder Path: /var/www/pterobilling"
   echo "env File Path: /var/www/pterobilling/.env"
+  echo "PteroBilling Version: ${PTEROBILLING_VERSION}"
+  echo "GitHub Branch: ${GITHUB_SOURCE}"
   echo "----------------------"
   exit 1
 }
