@@ -5,16 +5,19 @@
 Use this section to tell people about which versions of your project are
 currently being supported with security updates.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| OS               | Version | Can run the script?|
+| ---------------- | ------- | ------------------ | 
+| Ubuntu           | 18.04   | :white_check_mark: |
+|                  | 20.04   | :white_check_mark: |
+| Debian           | 9       | :white_check_mark: |
+|                  | 10      | :white_check_mark: |
+| CentOS           | 6       | :x: SOON           |
+|                  | 7       | :x: SOON           |
+|                  | 8       | :x: SOON           |
 
 ## Reporting a Vulnerability
 
 Use this section to tell people how to report a vulnerability.
 
-Go to ![Discussions](https://github.com/MinePlay85/PteroBilling-installer/discussions) for help or:
-![Issues page](https://github.com/MinePlay85/PteroBilling-installer/issues) for reporting bug.
+Go to [Discussions](https://github.com/MinePlay85/PteroBilling-installer/discussions) for help or:
+[Issues page](https://github.com/MinePlay85/PteroBilling-installer/issues) for reporting bug.
