@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 set -e
 
@@ -107,5 +107,5 @@ while [ "$finish" == false ]; do
 
   valid_input=("$(for ((i=0;i<=${#actions[@]}-1;i+=1)); do echo "${i}"; done)")
   [[ ! " ${valid_input[*]} " =~ ${action} ]] && error "Invalid option you need to choose (1/2)"
-  [[ " ${valid_input[*]} " =~ ${action} ]] && done=true && eval "${actions[$action]}"
+  [[ " ${valid_input[*]} " =~ ${action} ]] && finish=true && eval "${actions[$action]}"
 done
