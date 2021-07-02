@@ -1,0 +1,5 @@
+language: shell
+os: linux
+script:
+  - shellcheck -e SC1091 install.sh
+  - shellcheck -e SC1091 install-pterobilling.sh
