@@ -83,9 +83,9 @@ done
 
 # OS fucn #
 
-OS=$(awk '/DISTRIB_ID=/' /etc/*-release | sed 's/DISTRIB_ID=//' | tr '[:upper:]' '[:lower:]')
+OS=$(grep '^NAME' /etc/os-release)
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-VERSION=$(awk '/DISTRIB_RELEASE=/' /etc/*-release | sed 's/DISTRIB_RELEASE=//' | sed 's/[.]0/./')
+VERSION=$(grep '^VERSION' /etc/os-release)
 
 echo -e "$OS"
 echo -e "$ARCH"
@@ -166,7 +166,7 @@ dependencies() {
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
     case "$OS" in
-      debian)
+      Debian GNU/Linux)
         sudo apt install apt-transport-https lsb-release ca-certificates wget -y
         sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
         sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
@@ -184,6 +184,24 @@ dependencies() {
         systemctl enable php8.0-fpm
         systemctl start php8.0-fpm
         systemctl stop apache2
+        ;;
+      CentOS Linux)
+        case "$VERSION" in
+          7 (Core))
+            sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+            sudo dnf module list PHP
+            sudo dnf module enable php:remi-8.0 -y
+            sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+          ;;
+          8 (Core))
+            sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+            sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+            sudo dnf module list PHP
+            sudo dnf module enable php:remi-8.0 -y
+            sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+          ;;
+        esac  
         ;;
     esac
   fi
