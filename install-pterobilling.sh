@@ -83,9 +83,9 @@ done
 
 # OS fucn #
 
-OS=$(grep '^NAME' /etc/os-release)
+OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-VERSION=$(grep '^VERSION' /etc/os-release)
+VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release)
 
 echo -e "$OS"
 echo -e "$ARCH"
@@ -166,7 +166,7 @@ dependencies() {
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
     case "$OS" in
-      Debian)
+      debian)
         sudo apt install apt-transport-https lsb-release ca-certificates wget -y
         sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
         sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
@@ -185,7 +185,7 @@ dependencies() {
         systemctl start php8.0-fpm
         systemctl stop apache2
         ;;
-      CentOS)
+      centos)
         case "$VERSION" in
           7)
             sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
