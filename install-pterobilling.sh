@@ -174,6 +174,7 @@ dependencies() {
         apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
         systemctl enable php8.0-fpm
         systemctl start php8.0-fpm
+        systemctl stop apache2
         ;;
       ubuntu)
         sudo apt install software-properties-common
@@ -182,6 +183,7 @@ dependencies() {
         apt -y install php8.0 php8.0-common php8.0-bcmath php8.0-ctype php8.0-fileinfo php8.0-mbstring openssl php8.0-pdo php8.0-mysql php8.0-tokenizer php8.0-xml php8.0-gd php8.0-curl php8.0-zip php8.0-fpm
         systemctl enable php8.0-fpm
         systemctl start php8.0-fpm
+        systemctl stop apache2
         ;;
     esac
   fi
@@ -239,6 +241,7 @@ pterobilling_dl() {
 
   #Composer Install Files
   # composer create-project pterobilling/pterobilling pterobilling --no-dev --stability=alpha
+  apt install git
   git clone $GIT_CLONE_URL
   cd /var/www/pterobilling
   cp .env.example .env
