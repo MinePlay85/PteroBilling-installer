@@ -182,7 +182,7 @@ dependencies() {
       systemctl enable php8.0-fpm
       systemctl start php8.0-fpm
       systemctl stop apache2
-    elif [[ "$OS" == "CentOS" ]]; then
+    elif [[ "$OS" == "CentOS Linux" ]]; then
       if [[ "$VERSION" == "7" ]]; then
         sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
