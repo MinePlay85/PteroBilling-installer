@@ -189,13 +189,13 @@ dependencies() {
       systemctl start php8.0-fpm
       systemctl stop apache2
     elif [[ ${NAMEOS} == "CentOS Linux" ]]; then
-      if [[ ${IDVERSION} == "7" ]]; then
+      if [[ ${ID_VERSION} == "7" ]]; then
         sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
         sudo dnf module list PHP
         sudo dnf module enable php:remi-8.0 -y
         sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
-      elif [[ ${IDVERSION} == "8" ]]; then
+      elif [[ ${ID_VERSION} == "8" ]]; then
         sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
         sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
         sudo dnf module list PHP
