@@ -165,8 +165,11 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-  local NAMEOS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
-  local IDVERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release)
+    # https://unix.stackexchange.com/questions/506352/bash-what-does-masking-return-values-mean
+    local NAMEOS
+    NAMEOS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
+    local ID_VERSION
+    ID_VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release)
 
     if [[ ${NAMEOS} == "Debian"* ]]; then
       sudo apt install apt-transport-https lsb-release ca-certificates wget -y
