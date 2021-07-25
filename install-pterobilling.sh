@@ -87,16 +87,16 @@ OS=""
 VERSION=""
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 
-if [ -f /etc/debian_version ]; then
-  OS="debian"
-  VERSION=$(cat /etc/debian_version)
-elif [ -f /etc/centos-release ]; then
-  OS="centos"
-  VERSION=$(cat /etc/centos-release)
-elif [ -f /etc/lsb-release ]; then
+if [ -f /etc/lsb-release ]; then
   . /etc/lsb-release
   OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
   VERSION=$DISTRIB_RELEASE 
+elif [ -f /etc/centos-release ]; then
+  OS="centos"
+  VERSION=$(cat /etc/centos-release)
+elif [ -f /etc/debian_version ]; then
+  OS="debian"
+  VERSION=$(cat /etc/debian_version)
 fi
 
 echo -e "$ARCH"
