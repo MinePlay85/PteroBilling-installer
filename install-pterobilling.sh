@@ -100,7 +100,14 @@ elif [ -f /etc/debian_version ]; then
 fi
 
 echo -e "$ARCH"
-echo -e "$VERSION"
+
+if [ $VERSION == "CentOS Linux release 8.3.2011" ];
+  VERSION="8"
+else
+  VERSION="7"
+fi
+
+
 # Variables #
 
 # Version of the Program
@@ -197,13 +204,26 @@ dependencies() {
       systemctl stop apache2
       ;;
     centos)
-      yum install dnf
-      yum install git
-      sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-      sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
-      sudo dnf module list PHP
-      sudo dnf module enable php:remi-8.0 -y
-      sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+      case $VERSION in
+      8)
+        yum install dnf
+        yum install git
+        sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+        sudo dnf module list PHP
+        sudo dnf module enable php:remi-8.0 -y
+        sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+        ;;
+      7)
+        yum install dnf
+        yum install git
+        sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+        sudo dnf module list PHP
+        sudo dnf module enable php:remi-8.0 -y
+        sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+        ;;
+      esac
       ;;
     esac
   fi    
@@ -303,7 +323,6 @@ pterobilling_dl() {
 }
 
 config() {
-
   php artisan migrate --seed --force  
   php artisan config:cache
   php artisan view:cache
