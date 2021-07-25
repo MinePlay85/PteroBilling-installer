@@ -87,7 +87,11 @@ OS=""
 VERSION=""
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 
-if [ -f /etc/lsb-release ]; then
+if [ -f /etc/os-release ]; then
+  . /etc/os-release
+  OS=$(echo "$ID" | awk '{print tolower($0)}')
+  VERSION=$(echo "$VERSION_ID" | awk '{print tolower($0)}')
+elif [ -f /etc/lsb-release ]; then
   . /etc/lsb-release
   OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
   VERSION=$DISTRIB_RELEASE 
@@ -101,11 +105,6 @@ fi
 
 echo -e "$ARCH"
 
-if [ "$VERSION" == "CentOS Linux release 8.3.2011" ]; then
-  VERSION="8"
-else
-  VERSION="7"
-fi
 
 
 # Variables #
