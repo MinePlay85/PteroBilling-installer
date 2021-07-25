@@ -201,7 +201,8 @@ dependencies() {
       sudo dnf module enable php:remi-8.0 -y
       sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
       ;;
-    esac  
+    esac
+  fi    
 
   echo -n "Do you already have composer ? (y/N): "
   read -r ASKCOMPOSER
