@@ -84,7 +84,7 @@ while [ "$finish" == false ]; do
     "Install PteroBilling"
     "Update PteroBilling to the latest\n"
 
-    "Don't install it"
+    "Cancel Install"
   )
 
   actions=(
