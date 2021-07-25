@@ -13,7 +13,7 @@ set -e
 #   
 ###########
 
-S_VERSION="1.1"
+S_VERSION="1.2"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="https://paypal.me/alaisterleung" 
 INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh"
