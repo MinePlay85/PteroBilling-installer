@@ -97,6 +97,7 @@ elif [ -f /etc/lsb-release ]; then
   . /etc/lsb-release
   OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
   OS_VER=$DISTRIB_RELEASE 
+fi
 
 # Variables #
 
