@@ -198,6 +198,7 @@ dependencies() {
       ;;
     centos)
       yum install dnf
+      yum install git
       sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
       sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
       sudo dnf module list PHP
@@ -221,32 +222,51 @@ dependencies() {
 
   if [[ ! "$MYSQLINSTALLATION" =~ [yY] ]]; then
     echo "Installing MariaDB..."
-    apt install -y mariadb-common mariadb-server mariadb-client
-    systemctl start mariadb
-    systemctl enable mariadb    
-    mysql_secure_installation
+    case "$OS" in 
+    debian | ubuntu)
+      apt install -y mariadb-common mariadb-server mariadb-client
+      systemctl start mariadb
+      systemctl enable mariadb    
+      mysql_secure_installation
+      ;;
+    centos)
+      sudo yum install wget
+      wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+      chmod +x mariadb_repo_setup
+      sudo ./mariadb_repo_setup
+      sudo yum install MariaDB-server
+      sudo systemctl start mariadb.service
+      sudo mysql_secure_installation
+      ;;
+    esac  
   fi  
 
   echo -n "You already nginx installed ? (y/N): "
   read -r NGINX_INSTALL
 
   if [[ ! "$NGINX_INSTALL" =~ [yY] ]]; then
-    apt install -y nginx
-    systemctl start nginx
+    case "$OS" in 
+    debian | ubuntu)
+      apt install -y nginx
+      systemctl start nginx
+      ;;
+    centos)
+      sudo yum -y update
+      sudo yum install -y epel-release
+      sudo yum –y install nginx
+      sudo systemctl stop apache2
+      sudo systemctl start nginx
+      ;;
+    esac
   fi
 
-  echo -n "You already Setup MySQL database ? (y/N): "
-  read -r MYSQL_USER_CHECK
-  
-  if [[ ! "$MYSQL_USER_CHECK" =~ [yY] ]]; then
-    echo "* Create Database..."
-    echo "* Put MySQL root Password"
-    mysql -e "USE mysql;"
-    mysql -e "CREATE USER '${DBUSER}'@'${DBHOST}' IDENTIFIED BY '${DBPASS}';"
-    mysql -e "CREATE DATABASE ${DBNAME};"
-    mysql -p -e "GRANT ALL PRIVILEGES ON ${DBNAME}.* TO '${DBUSER}'@'${DBHOST}' WITH GRANT OPTION;"
-    mysql -e "FLUSH PRIVILEGES;"
-  fi
+  echo "* Create Database..."
+  echo "* Put MySQL root Password"
+  mysql -e "USE mysql;"
+  mysql -e "CREATE USER '${DBUSER}'@'${DBHOST}' IDENTIFIED BY '${DBPASS}';"
+  mysql -e "CREATE DATABASE ${DBNAME};"
+  mysql -p -e "GRANT ALL PRIVILEGES ON ${DBNAME}.* TO '${DBUSER}'@'${DBHOST}' WITH GRANT OPTION;"
+  mysql -e "FLUSH PRIVILEGES;"
 
   apt -y install redis-server
   systemctl start redis-server

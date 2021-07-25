@@ -5,14 +5,14 @@
 Use this section to tell people about which versions of your project are
 currently being supported with security updates.
 
-| OS               | Version | Can run the script?|
+| Operating System | Version | Can run the script?|
 | ---------------- | ------- | ------------------ | 
 | Ubuntu           | 18.04   | :white_check_mark: |
 |                  | 20.04   | :white_check_mark: |
 | Debian           | 9       | :white_check_mark: |
 |                  | 10      | :white_check_mark: |
 | CentOS           | 6       | :x: SOON           |
-|                  | 7       | :x: SOON           |
+|                  | 7       | :white_check_mark: |
 |                  | 8       | :x: SOON           |
 
 ## Reporting a Vulnerability
