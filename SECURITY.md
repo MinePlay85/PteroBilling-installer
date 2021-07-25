@@ -11,9 +11,9 @@ currently being supported with security updates.
 |                  | 20.04   | :white_check_mark: |
 | Debian           | 9       | :white_check_mark: |
 |                  | 10      | :white_check_mark: |
-| CentOS           | 6       | :x: SOON           |
+| CentOS           | 6       | :x:                |
 |                  | 7       | :white_check_mark: |
-|                  | 8       | :x: SOON           |
+|                  | 8       | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

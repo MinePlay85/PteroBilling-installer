@@ -253,13 +253,22 @@ dependencies() {
       mysql_secure_installation
       ;;
     centos)
-      sudo yum install wget
-      wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
-      chmod +x mariadb_repo_setup
-      sudo ./mariadb_repo_setup
-      sudo yum install MariaDB-server
-      sudo systemctl start mariadb.service
-      sudo mysql_secure_installation
+      case $VERSION in
+      7)
+        sudo yum install wget
+        wget https://downloads.mariadb.com/MariaDB/mariadb_repo_setup
+        chmod +x mariadb_repo_setup
+        sudo ./mariadb_repo_setup
+        sudo yum install MariaDB-server
+        sudo systemctl start mariadb.service
+        sudo mysql_secure_installation
+        ;;
+      8)
+        sudo dnf install mariadb-server
+        sudo systemctl start mariadb
+        ;;
+      esac
+      
       ;;
     esac  
   fi  
@@ -274,11 +283,20 @@ dependencies() {
       systemctl start nginx
       ;;
     centos)
-      sudo yum -y update
-      sudo yum install -y epel-release
-      sudo yum –y install nginx
-      sudo systemctl stop apache2
-      sudo systemctl start nginx
+      case $VERSION in
+      7)
+        sudo yum -y update
+        sudo yum install -y epel-release
+        sudo yum –y install nginx
+        sudo systemctl start nginx.service
+        ;;
+      8)
+        sudo yum -y update
+        yum –y install nginx
+        sudo systemctl start nginx.service
+        ;;
+      esac
+      
       ;;
     esac
   fi
