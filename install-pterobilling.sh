@@ -207,15 +207,19 @@ dependencies() {
       8)
         yum install dnf
         yum install git
-        sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-        sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
-        sudo dnf module list PHP
-        sudo dnf module enable php:remi-8.0 -y
-        sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+        yum install sudo
+        sudo dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        sudo dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+        sudo dnf -y install yum-utils
+        sudo dnf module reset php
+        sudo dnf module install php:remi-8.0 -y
+        sudo dnf install php -y
+        sudo dnf -y install php-{common,bcmath,ctype,fileinfo,mbstring,openssl,pdo,mysql,tokenizer,xml,gd,curl,zip,fpm}
         ;;
       7)
         yum install dnf
         yum install git
+        yum install sudo
         sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
         sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
         sudo dnf module list PHP
