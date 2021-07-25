@@ -96,9 +96,11 @@ elif [ -f /etc/centos-release ]; then
 elif [ -f /etc/lsb-release ]; then
   . /etc/lsb-release
   OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
-  OS_VER=$DISTRIB_RELEASE 
+  VERSION=$DISTRIB_RELEASE 
 fi
 
+echo -e "$ARCH"
+echo -e "$VERSION"
 # Variables #
 
 # Version of the Program
