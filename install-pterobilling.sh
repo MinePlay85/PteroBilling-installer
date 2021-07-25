@@ -101,7 +101,7 @@ fi
 
 echo -e "$ARCH"
 
-if [ $VERSION == "CentOS Linux release 8.3.2011" ];
+if [ $VERSION == "CentOS Linux release 8.3.2011" ]; then
   VERSION="8"
 else
   VERSION="7"
