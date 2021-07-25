@@ -40,7 +40,7 @@ YELLOW="\033[1;33m"
 reset="\e[0m"
 red='\033[0;31m'
 
-echo -n -e "Do you want to add an FQDN (e.g billing.pterobilling.xyz): "
+echo -n -e "Do you want to add an FQDN (e.g billing.pterobilling.org): "
 read -r FQDN
 
 echo -n -e "${GREEN}What is your Database Hostname ? ${YELLOW}(127.0.0.1)${reset}: "
@@ -83,13 +83,20 @@ done
 
 # OS fucn #
 
-OS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
+OS=""
+VERSION=""
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release)
 
-echo -e "$OS"
-echo -e "$ARCH"
-echo -e "$VERSION"
+if [ -f /etc/debian_version ]; then
+  OS="debian"
+  VERSION=$(cat /etc/debian_version)
+elif [ -f /etc/centos-release ]; then
+  OS="centos"
+  VERSION=$(cat /etc/centos-release)
+elif [ -f /etc/lsb-release ]; then
+  . /etc/lsb-release
+  OS=$(echo "$DISTRIB_ID" | awk '{print tolower($0)}')
+  OS_VER=$DISTRIB_RELEASE 
 
 # Variables #
 
@@ -165,13 +172,9 @@ dependencies() {
   read -r ASKPHP
 
   if [[ ! "$ASKPHP" =~ [yY] ]]; then 
-    # https://unix.stackexchange.com/questions/506352/bash-what-does-masking-return-values-mean
-    local NAMEOS
-    NAMEOS=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
-    local ID_VERSION
-    ID_VERSION=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release)
 
-    if [[ "$NAMEOS" == "Debian"* ]]; then
+    case "$OS" in
+    debian)
       sudo apt install apt-transport-https lsb-release ca-certificates wget -y
       sudo wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg 
       sudo sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
@@ -180,7 +183,8 @@ dependencies() {
       systemctl enable php8.0-fpm
       systemctl start php8.0-fpm
       systemctl stop apache2
-    elif [[ "$NAMEOS" == "Ubuntu"* ]]; then
+      ;;
+    ubuntu)
       sudo apt install software-properties-common
       sudo add-apt-repository ppa:ondrej/php
       sudo apt-get update
@@ -188,22 +192,16 @@ dependencies() {
       systemctl enable php8.0-fpm
       systemctl start php8.0-fpm
       systemctl stop apache2
-    elif [[ "$NAMEOS" == "CentOS Linux" ]]; then
-      if [[ "$ID_VERSION" == "7" ]]; then
-        sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-        sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
-        sudo dnf module list PHP
-        sudo dnf module enable php:remi-8.0 -y
-        sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
-      elif [[ "$ID_VERSION" == "8" ]]; then
-        sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-        sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
-        sudo dnf module list PHP
-        sudo dnf module enable php:remi-8.0 -y
-        sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
-      fi
-    fi
-  fi
+      ;;
+    centos)
+      yum install dnf
+      sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      sudo dnf module list PHP
+      sudo dnf module enable php:remi-8.0 -y
+      sudo dnf install php php-common php-bcmath php-ctype php-fileinfo php-mbstring openssl php-pdo php-mysql php-tokenizer php-xml php-gd php-curl php-zip php-fpm
+      ;;
+    esac  
 
   echo -n "Do you already have composer ? (y/N): "
   read -r ASKCOMPOSER
