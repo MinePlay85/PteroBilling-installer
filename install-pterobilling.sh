@@ -362,7 +362,7 @@ ssl() {
       ;;
   esac
   # Obtain certificate
-  service nginx restart
+  service nginx restart || true
   certbot certonly -d "$FQDN"
   service nginx restart
 
