@@ -362,9 +362,9 @@ ssl() {
       ;;
   esac
   # Obtain certificate
-  service nginx restart || true
+  service nginx stop || true
   certbot certonly -d "$FQDN"
-  service nginx restart
+  service nginx start
 
   # Check if it succeded
   if [ ! -d "/etc/letsencrypt/live/$FQDN/" ]; then
