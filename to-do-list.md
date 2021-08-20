@@ -1,4 +1,4 @@
-# TO-DO-LIST/
+# TO-DO-LIST:
 
 - some colors
 - No bug
