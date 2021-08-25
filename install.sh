@@ -4,16 +4,15 @@ set -e
 
 ###########
 #
-#           PteroBilling Installation
+#           PteroBlling Installer
 #
-#   The organization was made by Alaister
+#               This installer is free and was made by MinePlay85 and contributor
+#               We use for this installer a GNU 3.0 LICENSE
+#               For PteroBilling we use MIT LICENSE
 #
-#   Protected with a MIT License
-#   Need Pterodactyl Panel v1.2.2 or above
-#   
 ###########
 
-S_VERSION="1.2"
+S_VERSION="1.3"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="https://paypal.me/alaisterleung" 
 INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh"

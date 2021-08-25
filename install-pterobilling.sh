@@ -4,13 +4,12 @@ set -e
 
 ###########
 #
-#           PteroBilling Installation
+#           PteroBlling Installer
 #
-#   The organization was made by Alaister
+#               This installer is free and was made by MinePlay85 and contributor
+#               We use for this installer a GNU 3.0 LICENSE
+#               For PteroBilling we use MIT LICENSE
 #
-#   Protected with a MIT License
-#   Need Pterodactyl Panel v1.2.2 or above
-#   
 ###########
 
 # General Checks #
@@ -415,9 +414,42 @@ bye() {
   exit 1
 }
 
+wrong_os() {
+  echo "Installation Aborted !"
+  echo "Wrong OS ! Check SECURITY.md on GitHub Page !"
+  exit 1
+}
+
+process_installation() {
+  install_files
+  bye
+}
+
 #run script
-install_files
-bye
+case "$OS" in
+  debian)
+    case "$VERSION" in
+      9 | 10)
+        process_installation
+        ;;
+      11)
+        wrong_os
+        ;;
+    esac
+  ;;
+  ubuntu)
+    process_installation
+    ;;
+  centos)
+    case "$VERSIO?" in
+      6)
+        wrong_os
+        ;;
+      7 | 8)
+        process_installation
+        ;;
+    esac
+esac
 
 # Install Link
 # https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install.sh
