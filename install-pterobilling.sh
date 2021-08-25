@@ -441,7 +441,7 @@ case "$OS" in
     process_installation
     ;;
   centos)
-    case "$VERSIO?" in
+    case "$VERSION" in
       6)
         wrong_os
         ;;
