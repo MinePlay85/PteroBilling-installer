@@ -25,7 +25,7 @@ You can read documentation: [Official PteroBilling docs](https://docs.pterobilli
 |                  | 20.04   | :white_check_mark: |
 | Debian           | 9       | :white_check_mark: |
 |                  | 10      | :white_check_mark: |
-|                  | 11      | :x: Starting Coding|
+|                  | 11      | :white_check_mark: |
 | CentOS           | 6       | :x:                |
 |                  | 7       | :white_check_mark: |
 |                  | 8       | :white_check_mark: |
