@@ -26,12 +26,6 @@ if ! [ -x "$(command -v curl)" ]; then
   exit 1
 fi
 
-# Check if is CentOS
-if [ "$OS" == "centos" ]; then
-  echo "The installer is not finished with centos"
-  exit 1
-fi
-
 # Color #
 # Thanks to https://techstop.github.io/bash-script-colors/ for color code
 GREEN="\e[0;92m"
