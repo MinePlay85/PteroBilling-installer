@@ -3,12 +3,22 @@
 set -e
 
 
-###
+###########
 #
-# PteroBilling Installer Script
-# GNL 3.0 License !
 #
-###
+#               PteroBilling Installer
+#             Copyright (C) 2021 - 2022, MinePlay85
+#
+#           Script Version: 1.3
+#           PteroBilling Version: Unstable
+#           Script made by MinePlay85
+#           Thanks to all contributors for help me.
+#           License: https://github.com/MinePlay85/PteroBilling-installer/blob/master/LICENSE
+#           Discord: https://discord.gg/bhAFfr9Kwe
+#
+#
+###########
+
 
 # check root privileges
 if [[ $EUID -ne 0 ]]; then

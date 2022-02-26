@@ -4,11 +4,17 @@ set -e
 
 ###########
 #
-#           PteroBlling Installer
 #
-#               This installer is free and was made by MinePlay85 and contributor
-#               We use for this installer a GNU 3.0 LICENSE
-#               For PteroBilling we use MIT LICENSE
+#               PteroBilling Installer
+#             Copyright (C) 2021 - 2022, MinePlay85
+#
+#           Script Version: 1.3
+#           PteroBilling Version: Unstable
+#           Script made by MinePlay85
+#           Thanks to all contributors for help me.
+#           License: https://github.com/MinePlay85/PteroBilling-installer/blob/master/LICENSE
+#           Discord: https://discord.gg/bhAFfr9Kwe
+#
 #
 ###########
 
