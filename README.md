@@ -23,6 +23,7 @@ You can read documentation: [Official PteroBilling docs](https://docs.pterobilli
 | ---------------- | ------- | ------------------ | 
 | Ubuntu           | 18.04   | :white_check_mark: |
 |                  | 20.04   | :white_check_mark: |
+|                  | 22.04   | :x: Soon           |
 | Debian           | 9       | :white_check_mark: |
 |                  | 10      | :white_check_mark: |
 |                  | 11      | :white_check_mark: |
