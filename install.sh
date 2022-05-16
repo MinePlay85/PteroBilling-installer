@@ -23,7 +23,7 @@ S_VERSION="1.3"
 PUBLIC_REPO="https://github.com/MinePlay85/PteroBilling-installer" #Mark repo of the installer
 SPONSOR="https://paypal.me/alaisterleung" 
 INSTALL_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-pterobilling.sh"
-INSTALLUPDATE_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-update.sh"
+#INSTALLUPDATE_LINK="https://raw.githubusercontent.com/MinePlay85/pterobilling-installer/master/install-update.sh"
 
 # exit with error if user is not root
 if [[ $EUID -ne 0 ]]; then
@@ -85,7 +85,7 @@ stop() {
 
 while [ "$finish" == false ]; do
   option=(
-    "Install PteroBilling"
+    "Install PteroBilling"\n
     #"Update PteroBilling to the latest\n"
 
     "Cancel Installation"
