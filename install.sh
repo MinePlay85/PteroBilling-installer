@@ -85,7 +85,7 @@ stop() {
 
 while [ "$finish" == false ]; do
   option=(
-    "Install PteroBilling"\n
+    "Install PteroBilling\n"
     #"Update PteroBilling to the latest\n"
 
     "Cancel Installation"
