@@ -78,22 +78,22 @@ stop() {
   exit 1
 }
 
-update() {
-  bash <(curl -s $INSTALLUPDATE_LINK)
-  exit 1
-}
+#update() {
+#  bash <(curl -s $INSTALLUPDATE_LINK)
+#  exit 1
+#}
 
 while [ "$finish" == false ]; do
   option=(
     "Install PteroBilling"
-    "Update PteroBilling to the latest\n"
+    #"Update PteroBilling to the latest\n"
 
     "Cancel Installation"
   )
 
   actions=(
     "billinginstall"
-    "update"
+    #"update"
 
     "stop"
   )
